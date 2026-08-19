@@ -1,0 +1,18 @@
+# deps / build
+node_modules/
+.output/
+.nitro/
+.tanstack/
+dist/
+
+# env — never commit keys
+.env
+.env.local
+.env.*.local
+
+# convex local state (deployment config); _generated IS committed
+.convex/
+
+# editor / os
+.DS_Store
+*.log

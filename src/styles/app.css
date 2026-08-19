@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  /* Spark brand — warm dark, ember accent. Tasteful, not neon. */
+  --color-midnight: #14101f;
+  --color-plum: #241a33;
+  --color-plum-light: #352747;
+  --color-ember: #ff4f66;
+  --color-ember-soft: #ff8fa0;
+  --color-blush: #ffd9e0;
+  --color-gold: #f5c26b;
+  --color-mist: #b9aecb;
+
+  --font-display: "Georgia", "Times New Roman", serif;
+}
+
+body {
+  background-color: var(--color-midnight);
+  color: #f6f2fa;
+  -webkit-tap-highlight-color: transparent;
+}

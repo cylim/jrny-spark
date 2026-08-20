@@ -113,7 +113,7 @@ export function applyEvent(
         activeCard: card,
         pendingDraw: null,
         pendingSnake: event.reason === "charm" ? null : state.pendingSnake,
-        usedPromptIds: isPinDraw(state, event.prompt, event.reason)
+        usedPromptIds: isPinnedPromptDraw(state, event.prompt, event.reason)
           ? state.usedPromptIds
           : trackUsed(state.usedPromptIds, event.prompt),
         stats: {
@@ -135,9 +135,15 @@ export function applyEvent(
 
     case "CARD_SKIP": {
       if (state.phase !== "prompt" || state.activeCard === null) return state;
-      // A pinned card is its own tile — a redraw would hand back the same pin.
-      // Pass (CARD_DONE) is the way to put it away; skip is a no-op here.
-      if (isPinDraw(state, state.activeCard.prompt, state.activeCard.reason))
+      // A Pinned Prompt is its own tile — a redraw would hand back the same
+      // pin. Pass (CARD_DONE) is the way to put it away; skip is a no-op here.
+      if (
+        isPinnedPromptDraw(
+          state,
+          state.activeCard.prompt,
+          state.activeCard.reason
+        )
+      )
         return state;
       const remaining = state.players[state.current].skipsRemaining;
       if (remaining !== null && remaining <= 0) return state;
@@ -305,11 +311,12 @@ function handleRoll(
 }
 
 /**
- * Pins live outside the deck cycle: they may legitimately fire again on a
+ * Was this card the tile's Pinned Prompt rather than a deck draw? Pinned
+ * Prompts live outside the deck cycle: they may legitimately fire again on a
  * revisit and must never be mistaken for a reshuffle. Mirrors the pin check
  * in draw.ts (`resolveDraw`).
  */
-function isPinDraw(
+function isPinnedPromptDraw(
   state: GameState,
   prompt: Prompt,
   reason: ActiveCard["reason"]

@@ -1,6 +1,12 @@
 import { openDB, type IDBPDatabase } from "idb";
 import { normalizeSession } from "~/game/engine";
-import type { GameState, Prompt, SessionStats, Tier } from "~/game/types";
+import type {
+  GameState,
+  Prompt,
+  SessionStats,
+  SkipBudget,
+  Tier,
+} from "~/game/types";
 import type { Locale } from "~/lib/i18n/messages";
 
 // Local-first storage (PRD §6.7). Everything here stays on the device;
@@ -14,7 +20,7 @@ export interface Prefs {
   lastTier?: Tier;
   playerNames?: [string, string];
   locale?: Locale;
-  lastSkipBudget?: number | null;
+  lastSkipBudget?: SkipBudget;
 }
 
 export interface HistoryEntry {
@@ -23,7 +29,7 @@ export interface HistoryEntry {
   tier: Tier;
   stats: SessionStats;
   /** The session's skip budget; absent on entries recorded before skips. */
-  skipsPerPlayer?: number | null;
+  skipsPerPlayer?: SkipBudget;
 }
 
 let dbPromise: Promise<IDBPDatabase> | null = null;

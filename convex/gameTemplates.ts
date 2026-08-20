@@ -14,7 +14,9 @@ const MAX_NAME_LENGTH = 80;
 const MAX_PIN_TEXT_LENGTH = 280;
 const MAX_PINS = 100;
 const MAX_TEMPLATES_PER_USER = 50;
-const DEFAULT_SKIP_BUDGET = 3; // §4.6 — mirrors src/game/engine.ts
+// §4.6 — MUST equal DEFAULT_SKIP_BUDGET in src/game/engine.ts (the server
+// bundle can't import client code, so the invariant is by convention).
+const DEFAULT_SKIP_BUDGET = 3;
 
 async function requireUser(ctx: QueryCtx) {
   const identity = await ctx.auth.getUserIdentity();

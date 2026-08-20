@@ -7,9 +7,11 @@ import { useI18n } from "~/lib/i18n";
  * The zone-dry choice (§4.7): Stay (true reshuffle) or Advance to the next
  * tier's deck. Advance takes one confirmation tap from EACH player — consent
  * is expanded by the couple, not by whoever holds the phone — so it hides
- * behind a second step with a named button per player. `advance` is null
- * when there is nothing to advance into (already spicy, or the next deck
- * isn't obtainable right now) — then the sheet is a one-tap reshuffle.
+ * behind a second step with a named button per player. Taps are deliberately
+ * component-local, not session state: a reload mid-confirmation re-asks both
+ * players, which is the consent-safe direction. `advance` is null when there
+ * is nothing to advance into (already spicy, or the next deck isn't
+ * obtainable right now) — then the sheet is a one-tap reshuffle.
  */
 export function ExhaustionChoiceSheet({
   tier,

@@ -7,6 +7,8 @@ import { zhHant } from "./zh-hant";
 // never a blank. React plumbing lives in ./index.tsx; this module stays pure
 // so the engine-side tests can cover it without a DOM.
 
+// MUST stay in sync with `localeValidator` in convex/schema.ts — importing
+// it here would pull convex/server into the client bundle.
 export type Locale = "en" | "ko" | "zh-Hant";
 export type MessageKey = keyof typeof en;
 

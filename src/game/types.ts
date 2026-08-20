@@ -20,11 +20,18 @@ export interface BoardPreset {
   neutralTiles: number[];
 }
 
+/**
+ * A per-player Skip allowance (§4.6): a whole number of budgeted redraws,
+ * or null for unlimited. The null contract travels with this name — the
+ * Convex schema (`gameTemplates.skipsPerPlayer`) follows the same shape.
+ */
+export type SkipBudget = number | null;
+
 export interface PlayerState {
   name: string;
   position: number; // 0 = off-board start
-  /** Budgeted redraws left; null = unlimited (§4.6). */
-  skipsRemaining: number | null;
+  /** Budgeted redraws left this session; null = unlimited (§4.6). */
+  skipsRemaining: SkipBudget;
 }
 
 export interface SessionConfig {
@@ -34,8 +41,8 @@ export interface SessionConfig {
   boardPresetId: string;
   /** Fixed prompts on specific tiles from a Game Template; trump deck draws. */
   tilePrompts?: Record<number, Prompt>;
-  /** Per-player skip budget; null = unlimited, absent = the default (3). */
-  skipsPerPlayer?: number | null;
+  /** Per-player skip budget; absent = the default (3). */
+  skipsPerPlayer?: SkipBudget;
 }
 
 export interface SessionStats {

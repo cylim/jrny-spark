@@ -18,6 +18,8 @@ export const kindValidator = v.union(
 );
 export const zoneValidator = v.union(v.literal(1), v.literal(2), v.literal(3));
 
+// MUST stay in sync with `Locale` in src/lib/i18n/messages.ts (and one
+// catalog file per locale there) — the client can't import convex/ code.
 export const localeValidator = v.union(
   v.literal("en"),
   v.literal("ko"),

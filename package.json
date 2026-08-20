@@ -8,6 +8,8 @@
     "build": "vite build && bun scripts/build-pwa.ts",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "seed": "convex run seed:seedDecks",
     "icons": "bun scripts/make-icons.ts"
   },
@@ -30,6 +32,7 @@
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
     "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.11",
     "workbox-build": "^7.4.1"
   }
 }

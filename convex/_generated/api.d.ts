@@ -9,7 +9,7 @@
  */
 
 import type * as decks from "../decks.js";
-import type * as games from "../games.js";
+import type * as gameTemplates from "../gameTemplates.js";
 import type * as seed from "../seed.js";
 import type * as starterDecks from "../starterDecks.js";
 
@@ -21,7 +21,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   decks: typeof decks;
-  games: typeof games;
+  gameTemplates: typeof gameTemplates;
   seed: typeof seed;
   starterDecks: typeof starterDecks;
 }>;

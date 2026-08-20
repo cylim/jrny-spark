@@ -6,34 +6,36 @@ import { hasClerk, hasConvex } from "~/env";
 import { createSession, zoneOf } from "~/game/engine";
 import type { Prompt } from "~/game/types";
 import { saveSession } from "~/lib/storage";
+import { useAgeGate } from "~/lib/use-age-gate";
+import { useDeckList } from "~/lib/use-decks";
 
-export const Route = createFileRoute("/games/")({
-  component: Games,
+export const Route = createFileRoute("/templates/")({
+  component: Templates,
 });
 
-function Games() {
+function Templates() {
   return (
     <main className="mx-auto max-w-md px-6 pb-16">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl text-blush">Your games</h1>
+        <h1 className="font-display text-3xl text-blush">My Templates</h1>
         <Link
-          to="/games/new"
+          to="/templates/new"
           className="rounded-full bg-ember px-4 py-2 text-sm font-semibold text-midnight"
         >
           + New
         </Link>
       </div>
       <p className="mt-2 text-xs text-mist">
-        Saved setups only — boards, decks and your custom cards. Never what
-        happened while playing.
+        Templates hold setups only — boards, decks and your pinned cards. Never
+        what happened while playing.
       </p>
 
       {!hasClerk || !hasConvex ? (
         <div className="mt-6 rounded-2xl bg-plum p-5 text-sm text-mist">
           Cloud saves need Clerk + Convex configured (demo mode right now).
-          You can still build and play custom games from{" "}
-          <Link to="/games/new" className="underline">
-            New game
+          You can still build and play Templates from{" "}
+          <Link to="/templates/new" className="underline">
+            New Template
           </Link>
           .
         </div>
@@ -41,7 +43,7 @@ function Games() {
         <>
           <Show when="signed-out">
             <div className="mt-6 rounded-2xl bg-plum p-5 text-center">
-              <p className="text-sm text-mist">Sign in to keep your game setups on every device.</p>
+              <p className="text-sm text-mist">Sign in to keep your Templates on every device.</p>
               <SignInButton mode="modal">
                 <button
                   type="button"
@@ -53,7 +55,7 @@ function Games() {
             </div>
           </Show>
           <Show when="signed-in">
-            <SavedGamesList />
+            <TemplatesList />
           </Show>
         </>
       )}
@@ -61,14 +63,16 @@ function Games() {
   );
 }
 
-function SavedGamesList() {
+function TemplatesList() {
   const navigate = useNavigate();
+  const decks = useDeckList();
+  const { withAgeCheck, ageGate } = useAgeGate();
   // Only mounted when hasConvex && hasClerk (gated by the parent) — no skip.
-  const games = useQuery(api.games.list, {});
-  const remove = useMutation(api.games.remove);
+  const templates = useQuery(api.gameTemplates.list, {});
+  const remove = useMutation(api.gameTemplates.remove);
 
-  if (games === undefined) return <p className="mt-6 text-sm text-mist">Loading…</p>;
-  if (games.length === 0) {
+  if (templates === undefined) return <p className="mt-6 text-sm text-mist">Loading…</p>;
+  if (templates.length === 0) {
     return (
       <p className="mt-6 text-sm text-mist">
         Nothing saved yet — build one with <span className="text-blush">+ New</span>.
@@ -76,11 +80,11 @@ function SavedGamesList() {
     );
   }
 
-  const play = async (game: (typeof games)[number]) => {
+  const begin = async (template: (typeof templates)[number]) => {
     const tilePrompts: Record<number, Prompt> = {};
-    for (const p of game.customPrompts) {
+    for (const p of template.customPrompts) {
       tilePrompts[p.tile] = {
-        id: `custom-${game._id}-${p.tile}`,
+        id: `custom-${template._id}-${p.tile}`,
         zone: zoneOf(p.tile),
         kind: p.kind,
         text: p.text,
@@ -90,10 +94,10 @@ function SavedGamesList() {
     await saveSession(
       createSession(
         {
-          tier: game.tier,
-          deckSlug: game.deckSlug,
+          tier: template.tier,
+          deckSlug: template.deckSlug,
           playerNames: ["Player 1", "Player 2"],
-          boardPresetId: game.boardPreset,
+          boardPresetId: template.boardPreset,
           tilePrompts,
         },
         Date.now(),
@@ -102,21 +106,28 @@ function SavedGamesList() {
     navigate({ to: "/play" });
   };
 
+  const play = (template: (typeof templates)[number]) => {
+    // Gate on the Deck's own tier; the stored tier (server-derived from the
+    // same deck at save time) is the fallback when the deck list is loading.
+    const deckTier = decks.find((d) => d.slug === template.deckSlug)?.tier ?? template.tier;
+    withAgeCheck(deckTier, () => void begin(template));
+  };
+
   return (
     <div className="mt-6 grid gap-3">
-      {games.map((game) => (
-        <div key={game._id} className="rounded-2xl bg-plum p-4">
+      {templates.map((template) => (
+        <div key={template._id} className="rounded-2xl bg-plum p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-semibold text-blush">{game.name}</p>
+              <p className="font-semibold text-blush">{template.name}</p>
               <p className="text-xs capitalize text-mist">
-                {game.tier} · {game.deckSlug} · {game.customPrompts.length} custom cards
+                {template.tier} · {template.deckSlug} · {template.customPrompts.length} pinned cards
               </p>
             </div>
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => play(game)}
+                onClick={() => play(template)}
                 className="rounded-full bg-ember px-4 py-1.5 text-xs font-semibold text-midnight"
               >
                 Play
@@ -124,7 +135,7 @@ function SavedGamesList() {
               <button
                 type="button"
                 onClick={() => {
-                  if (confirm(`Delete "${game.name}"?`)) void remove({ id: game._id });
+                  if (confirm(`Delete "${template.name}"?`)) void remove({ id: template._id });
                 }}
                 className="rounded-full bg-plum-light px-3 py-1.5 text-xs text-mist hover:text-blush"
               >
@@ -134,6 +145,7 @@ function SavedGamesList() {
           </div>
         </div>
       ))}
+      {ageGate}
     </div>
   );
 }

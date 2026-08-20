@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Show, SignInButton } from "@clerk/tanstack-react-start";
 import { useMutation } from "convex/react";
+import { ConvexError } from "convex/values";
 import { api } from "../../../convex/_generated/api";
 import { hasClerk, hasConvex } from "~/env";
 import { createSession, zoneOf } from "~/game/engine";
@@ -11,9 +12,10 @@ import { DEMO_DECK_SLUG } from "~/game/demo-deck";
 import type { Prompt, PromptKind, Tier } from "~/game/types";
 import { useDeckList } from "~/lib/use-decks";
 import { saveSession } from "~/lib/storage";
+import { useAgeGate } from "~/lib/use-age-gate";
 
-export const Route = createFileRoute("/games/new")({
-  component: NewGame,
+export const Route = createFileRoute("/templates/new")({
+  component: NewTemplate,
 });
 
 interface CustomRow {
@@ -35,10 +37,11 @@ function pinIssue(row: CustomRow): string | null {
   return rejection ? PIN_MESSAGES[rejection] : null;
 }
 
-function NewGame() {
+function NewTemplate() {
   const navigate = useNavigate();
   const decks = useDeckList();
-  const saveGame = useMutation(api.games.save);
+  const saveTemplate = useMutation(api.gameTemplates.save);
+  const { withAgeCheck, ageGate } = useAgeGate();
 
   const [name, setName] = useState("");
   const [tier, setTier] = useState<Tier>("sweet");
@@ -46,6 +49,13 @@ function NewGame() {
   const [rows, setRows] = useState<CustomRow[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Match setup's tier picker: confirm 18+ before even browsing spicy decks.
+  const pickTier = (t: Tier) =>
+    withAgeCheck(t, () => {
+      setTier(t);
+      setDeckSlug(null);
+    });
 
   const tierDecks = decks.filter((d) => d.tier === tier);
   const chosenSlug = tierDecks.find((d) => d.slug === deckSlug)?.slug ?? tierDecks[0]?.slug ?? DEMO_DECK_SLUG;
@@ -68,7 +78,7 @@ function NewGame() {
     return out;
   };
 
-  const playNow = async () => {
+  const beginDraft = async () => {
     // Awaited — /play reads the session on mount (see setup.tsx).
     await saveSession(
       createSession(
@@ -85,20 +95,30 @@ function NewGame() {
     navigate({ to: "/play" });
   };
 
+  const playNow = () => {
+    // Gate on the chosen Deck's own tier — a draft is a session start too.
+    const deckTier = decks.find((d) => d.slug === chosenSlug)?.tier ?? tier;
+    withAgeCheck(deckTier, () => void beginDraft());
+  };
+
   const save = async () => {
     setSaving(true);
     setSaveError(null);
     try {
-      await saveGame({
+      // Tier is derived server-side from the deck — never sent by the client.
+      await saveTemplate({
         name: name.trim() || "Our game",
-        tier,
         deckSlug: chosenSlug,
         boardPreset: "classic",
         customPrompts: validRows.map((r) => ({ tile: r.tile, text: r.text.trim(), kind: r.kind })),
       });
-      navigate({ to: "/games" });
-    } catch {
-      setSaveError("Couldn't save — check your connection and sign-in, then try again.");
+      navigate({ to: "/templates" });
+    } catch (err) {
+      setSaveError(
+        err instanceof ConvexError && typeof err.data === "string"
+          ? err.data
+          : "Couldn't save — check your connection and sign-in, then try again.",
+      );
     } finally {
       setSaving(false);
     }
@@ -106,7 +126,7 @@ function NewGame() {
 
   return (
     <main className="mx-auto max-w-md px-6 pb-16">
-      <h1 className="font-display text-3xl text-blush">Build a game</h1>
+      <h1 className="font-display text-3xl text-blush">Build a Template</h1>
       <p className="mt-2 text-xs text-mist">
         Pin your own cards to specific tiles — inside jokes, real plans, your
         own dares. They override deck draws on those tiles.
@@ -118,7 +138,7 @@ function NewGame() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Anniversary special"
-          maxLength={40}
+          maxLength={80}
           className="mt-2 w-full rounded-xl bg-plum px-4 py-3 font-normal normal-case tracking-normal text-blush placeholder:text-mist/40 focus:outline-2 focus:outline-ember"
         />
       </label>
@@ -128,10 +148,7 @@ function NewGame() {
           Tier
           <select
             value={tier}
-            onChange={(e) => {
-              setTier(e.target.value as Tier);
-              setDeckSlug(null);
-            }}
+            onChange={(e) => pickTier(e.target.value as Tier)}
             className="mt-2 w-full rounded-xl bg-plum px-3 py-3 font-normal normal-case tracking-normal text-blush"
           >
             <option value="sweet">Sweet 🌷</option>
@@ -158,7 +175,7 @@ function NewGame() {
 
       <section className="mt-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-mist">Custom cards</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-mist">Pinned cards</h2>
           <button
             type="button"
             onClick={() => setRows([...rows, { tile: 10, text: "", kind: "question" }])}
@@ -238,14 +255,14 @@ function NewGame() {
                 disabled={saving || blocked}
                 className="rounded-full bg-plum-light py-3 text-sm text-blush disabled:opacity-50"
               >
-                {saving ? "Saving…" : "Save to my games"}
+                {saving ? "Saving…" : "Save to My Templates"}
               </button>
               {saveError && <p className="text-center text-xs text-ember-soft">{saveError}</p>}
             </Show>
             <Show when="signed-out">
               <SignInButton mode="modal">
                 <button type="button" className="rounded-full bg-plum-light py-3 text-sm text-mist">
-                  Sign in to save this game
+                  Sign in to save this Template
                 </button>
               </SignInButton>
             </Show>
@@ -256,6 +273,7 @@ function NewGame() {
           </p>
         )}
       </div>
+      {ageGate}
     </main>
   );
 

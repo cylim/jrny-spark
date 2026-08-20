@@ -59,8 +59,8 @@ function Header() {
         <Link to="/play/setup" className="hover:text-blush">
           Play
         </Link>
-        <Link to="/games" className="hover:text-blush">
-          Games
+        <Link to="/templates" className="hover:text-blush">
+          My Templates
         </Link>
         <Link to="/settings" className="hover:text-blush">
           Settings

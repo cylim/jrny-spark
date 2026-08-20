@@ -3,9 +3,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { GameState, Tier } from "~/game/types";
 import { createSession } from "~/game/engine";
 import { DEMO_DECK_SLUG } from "~/game/demo-deck";
-import { AgeGate } from "~/components/AgeGate";
 import { useDeckList } from "~/lib/use-decks";
 import { loadPrefs, loadSession, requestPersistence, savePrefs, saveSession } from "~/lib/storage";
+import { useAgeGate } from "~/lib/use-age-gate";
 import { hasConvex } from "~/env";
 
 export const Route = createFileRoute("/play/setup")({
@@ -22,18 +22,17 @@ function Setup() {
   const navigate = useNavigate();
   const decks = useDeckList();
 
+  const { withAgeCheck, ageGate } = useAgeGate();
+
   const [names, setNames] = useState<[string, string]>(["", ""]);
   const [tier, setTier] = useState<Tier>("sweet");
   const [deckSlug, setDeckSlug] = useState<string | null>(null);
-  const [ageConfirmed, setAgeConfirmed] = useState(false);
-  const [showAgeGate, setShowAgeGate] = useState(false);
   const [resumable, setResumable] = useState<GameState | null>(null);
 
   useEffect(() => {
     loadPrefs().then((p) => {
       if (p.playerNames) setNames(p.playerNames);
       if (p.lastTier) setTier(p.lastTier);
-      setAgeConfirmed(Boolean(p.ageConfirmed));
     });
     loadSession().then((s) => {
       if (s && s.phase !== "finished") setResumable(s);
@@ -44,16 +43,13 @@ function Setup() {
   const chosenDeck =
     tierDecks.find((d) => d.slug === deckSlug) ?? tierDecks[0] ?? null;
 
-  const pickTier = (t: Tier) => {
-    if (t === "spicy" && !ageConfirmed) {
-      setShowAgeGate(true);
-      return;
-    }
-    setTier(t);
-    setDeckSlug(null);
-  };
+  const pickTier = (t: Tier) =>
+    withAgeCheck(t, () => {
+      setTier(t);
+      setDeckSlug(null);
+    });
 
-  const start = async () => {
+  const begin = async () => {
     const playerNames: [string, string] = [
       names[0].trim() || "Player 1",
       names[1].trim() || "Player 2",
@@ -71,6 +67,12 @@ function Setup() {
     requestPersistence();
     navigate({ to: "/play" });
   };
+
+  // Gate on the Deck actually being played, not just the tier button —
+  // e.g. a remembered spicy lastTier must still hit the gate here. While
+  // decks are still loading (no chosenDeck) fall back to the selected
+  // tier, never a milder default: the gate must fail closed.
+  const start = () => withAgeCheck(chosenDeck?.tier ?? tier, () => void begin());
 
   return (
     <main className="mx-auto max-w-md px-6 pb-16">
@@ -167,18 +169,7 @@ function Setup() {
         Start the journey
       </button>
 
-      {showAgeGate && (
-        <AgeGate
-          onConfirm={() => {
-            setAgeConfirmed(true);
-            void savePrefs({ ageConfirmed: true });
-            setTier("spicy");
-            setDeckSlug(null);
-            setShowAgeGate(false);
-          }}
-          onCancel={() => setShowAgeGate(false)}
-        />
-      )}
+      {ageGate}
     </main>
   );
 }

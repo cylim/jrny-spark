@@ -33,7 +33,7 @@ export const seedDecks = internalMutation({
         deckId = existing._id;
         const oldPrompts = await ctx.db
           .query("prompts")
-          .withIndex("by_deck", (q) => q.eq("deckId", deckId))
+          .withIndex("by_deckId", (q) => q.eq("deckId", deckId))
           .collect();
         for (const p of oldPrompts) await ctx.db.delete(p._id);
       } else {

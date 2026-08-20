@@ -40,8 +40,8 @@ export const getPrompts = query({
       if (!identity) throw new Error("Sign in to access this deck");
       const purchase = await ctx.db
         .query("purchases")
-        .withIndex("by_user_deck", (q) =>
-          q.eq("userId", identity.subject).eq("deckSlug", deck.slug),
+        .withIndex("by_userId_and_deckSlug", (q) =>
+          q.eq("userId", identity.tokenIdentifier).eq("deckSlug", deck.slug),
         )
         .first();
       if (!purchase) throw new Error("This deck hasn't been unlocked");
@@ -49,7 +49,7 @@ export const getPrompts = query({
 
     const prompts = await ctx.db
       .query("prompts")
-      .withIndex("by_deck", (q) => q.eq("deckId", deck._id))
+      .withIndex("by_deckId", (q) => q.eq("deckId", deck._id))
       .collect();
 
     return prompts.map((p) => ({

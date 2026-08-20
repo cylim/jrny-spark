@@ -30,7 +30,7 @@ export interface SessionConfig {
   deckSlug: string;
   playerNames: [string, string];
   boardPresetId: string;
-  /** Fixed prompts on specific tiles from a custom game; trump deck draws. */
+  /** Fixed prompts on specific tiles from a Game Template; trump deck draws. */
   tilePrompts?: Record<number, Prompt>;
 }
 

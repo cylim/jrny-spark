@@ -1,5 +1,7 @@
 import { openDB, type IDBPDatabase } from "idb";
+import { normalizeSession } from "~/game/engine";
 import type { GameState, Prompt, SessionStats, Tier } from "~/game/types";
+import type { Locale } from "~/lib/i18n/messages";
 
 // Local-first storage (PRD §6.7). Everything here stays on the device;
 // none of it is ever sent to Convex.
@@ -11,6 +13,8 @@ export interface Prefs {
   ageConfirmed?: boolean;
   lastTier?: Tier;
   playerNames?: [string, string];
+  locale?: Locale;
+  lastSkipBudget?: number | null;
 }
 
 export interface HistoryEntry {
@@ -18,6 +22,8 @@ export interface HistoryEntry {
   winnerName: string;
   tier: Tier;
   stats: SessionStats;
+  /** The session's skip budget; absent on entries recorded before skips. */
+  skipsPerPlayer?: number | null;
 }
 
 let dbPromise: Promise<IDBPDatabase> | null = null;
@@ -39,7 +45,10 @@ function db(): Promise<IDBPDatabase> | null {
 // — session (auto-resume) —
 export async function loadSession(): Promise<GameState | null> {
   const d = await db();
-  return d ? ((await d.get("session", "current")) ?? null) : null;
+  if (!d) return null;
+  const saved: GameState | undefined = await d.get("session", "current");
+  // Normalized so a mid-game save from an older build gets the newer fields.
+  return saved ? normalizeSession(saved) : null;
 }
 export async function saveSession(state: GameState): Promise<void> {
   await (await db())?.put("session", state, "current");
@@ -67,8 +76,39 @@ export async function getCachedDeck(slug: string): Promise<Prompt[] | null> {
   const entry = await d.get("deckCache", slug);
   return entry?.prompts ?? null;
 }
-export async function cacheDeck(slug: string, prompts: Prompt[]): Promise<void> {
-  await (await db())?.put("deckCache", { prompts, fetchedAt: Date.now() }, slug);
+export async function cacheDeck(
+  slug: string,
+  prompts: Prompt[]
+): Promise<void> {
+  await (
+    await db()
+  )?.put("deckCache", { prompts, fetchedAt: Date.now() }, slug);
+}
+
+// — deck metadata cache —
+// Slugs can't collide with the key: they never start with "__". Cached so an
+// offline mid-session Advance (§4.7) can still find the next tier's deck.
+const DECK_LIST_KEY = "__deckList";
+
+export interface CachedDeckMeta {
+  slug: string;
+  title: string;
+  description: string;
+  tier: Tier;
+  isPremium: boolean;
+  promptCount: number;
+}
+
+export async function getCachedDeckList(): Promise<CachedDeckMeta[] | null> {
+  const d = await db();
+  if (!d) return null;
+  const entry = await d.get("deckCache", DECK_LIST_KEY);
+  return entry?.decks ?? null;
+}
+export async function cacheDeckList(decks: CachedDeckMeta[]): Promise<void> {
+  await (
+    await db()
+  )?.put("deckCache", { decks, fetchedAt: Date.now() }, DECK_LIST_KEY);
 }
 
 // — history (local-only recaps) —
@@ -87,7 +127,10 @@ export async function lastHistory(): Promise<HistoryEntry | null> {
 export async function clearAllLocalData(): Promise<void> {
   const d = await db();
   if (!d) return;
-  const tx = d.transaction(["session", "prefs", "deckCache", "drafts", "history"], "readwrite");
+  const tx = d.transaction(
+    ["session", "prefs", "deckCache", "drafts", "history"],
+    "readwrite"
+  );
   await Promise.all([
     tx.objectStore("session").clear(),
     tx.objectStore("prefs").clear(),

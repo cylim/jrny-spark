@@ -1,7 +1,11 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-export const tierValidator = v.union(v.literal("sweet"), v.literal("flirty"), v.literal("spicy"));
+export const tierValidator = v.union(
+  v.literal("sweet"),
+  v.literal("flirty"),
+  v.literal("spicy")
+);
 
 const purchaseBase = v.object({
   userId: v.string(), // stable auth identity (identity.tokenIdentifier)
@@ -10,9 +14,29 @@ const purchaseBase = v.object({
 export const kindValidator = v.union(
   v.literal("question"),
   v.literal("action"),
-  v.literal("together"),
+  v.literal("together")
 );
 export const zoneValidator = v.union(v.literal(1), v.literal(2), v.literal(3));
+
+export const localeValidator = v.union(
+  v.literal("en"),
+  v.literal("ko"),
+  v.literal("zh-Hant")
+);
+
+// Display text is a per-locale map — English required, others optional
+// (PRD §6.10). One canonical Card, per-language text.
+export const localizedTextValidator = v.object({
+  en: v.string(),
+  ko: v.optional(v.string()),
+  "zh-Hant": v.optional(v.string()),
+});
+
+// Rolling migration: rows written before i18n are plain strings (≙ English).
+// Reads normalize via decks.ts `localize()`; re-seeding rewrites starter
+// content in the localized shape. Keeping the union means a deploy never
+// fails schema validation against old rows.
+export const displayTextValidator = v.union(v.string(), localizedTextValidator);
 
 // PRIVACY LINE (PRD §2.1): these tables hold identity, purchases and Game
 // Templates (saved configurations) only. No table ever stores live sessions,
@@ -21,8 +45,8 @@ export const zoneValidator = v.union(v.literal(1), v.literal(2), v.literal(3));
 export default defineSchema({
   decks: defineTable({
     slug: v.string(), // "starter-sweet"
-    title: v.string(),
-    description: v.string(),
+    title: displayTextValidator,
+    description: displayTextValidator,
     tier: tierValidator,
     isPremium: v.boolean(), // MVP: always false
     isActive: v.boolean(), // unpublish without deleting
@@ -35,7 +59,7 @@ export default defineSchema({
     deckId: v.id("decks"),
     zone: zoneValidator,
     kind: kindValidator,
-    text: v.string(),
+    text: displayTextValidator,
     props: v.optional(v.boolean()),
   }).index("by_deckId", ["deckId"]),
 
@@ -45,6 +69,9 @@ export default defineSchema({
     tier: tierValidator, // derived server-side from the Deck — never client-declared
     deckSlug: v.string(),
     boardPreset: v.string(), // "classic" for MVP
+    // Per-player skip budget (§4.6): null = unlimited; absent on rows saved
+    // before the field existed — clients treat absent as the default (3).
+    skipsPerPlayer: v.optional(v.union(v.number(), v.null())),
     // Bounded by save(): ≤ 100 pins × ≤ 280 chars (~30 KB worst case).
     // Re-evaluate this inline array before ever lifting the mutation caps.
     customPrompts: v.array(
@@ -52,7 +79,7 @@ export default defineSchema({
         tile: v.number(),
         text: v.string(),
         kind: kindValidator,
-      }),
+      })
     ),
   }).index("by_userId", ["userId"]),
 
@@ -61,8 +88,8 @@ export default defineSchema({
   purchases: defineTable(
     v.union(
       purchaseBase.extend({ kind: v.literal("deck"), deckSlug: v.string() }),
-      purchaseBase.extend({ kind: v.literal("feature") }),
-    ),
+      purchaseBase.extend({ kind: v.literal("feature") })
+    )
   )
     .index("by_userId", ["userId"])
     .index("by_userId_and_deckSlug", ["userId", "deckSlug"]),

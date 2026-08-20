@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lastHistory, type HistoryEntry } from "~/lib/storage";
+import { useI18n } from "~/lib/i18n";
 
 export const Route = createFileRoute("/play/recap")({
   component: Recap,
 });
 
 function Recap() {
-  const [entry, setEntry] = useState<HistoryEntry | null | undefined>(undefined);
+  const { t } = useI18n();
+  const [entry, setEntry] = useState<HistoryEntry | null | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     lastHistory().then((e) => setEntry(e ?? null));
@@ -19,30 +23,46 @@ function Recap() {
   if (entry === null) {
     return (
       <main className="mx-auto max-w-md px-6 py-16 text-center">
-        <p className="text-mist">No finished games yet.</p>
-        <Link to="/play/setup" className="mt-4 inline-block rounded-full bg-ember px-8 py-3 font-semibold text-midnight">
-          Start one
+        <p className="text-mist">{t("recap.empty")}</p>
+        <Link
+          to="/play/setup"
+          className="mt-4 inline-block rounded-full bg-ember px-8 py-3 font-semibold text-midnight"
+        >
+          {t("recap.empty.cta")}
         </Link>
       </main>
     );
   }
 
-  const minutes = Math.max(1, Math.round((entry.finishedAt - entry.stats.startedAt) / 60000));
+  const minutes = Math.max(
+    1,
+    Math.round((entry.finishedAt - entry.stats.startedAt) / 60000)
+  );
   const stats: Array<[string, number | string]> = [
-    ["Minutes together", minutes],
-    ["Cards drawn", entry.stats.cardsDrawn],
-    ["Ladders climbed", entry.stats.laddersClimbed],
-    ["Snakes charmed", entry.stats.snakesCharmed],
-    ["Slides taken", entry.stats.snakesSlid],
-    ["Rolls", entry.stats.rolls],
+    [t("recap.stat.minutes"), minutes],
+    [t("recap.stat.cards"), entry.stats.cardsDrawn],
+    [t("recap.stat.ladders"), entry.stats.laddersClimbed],
+    [t("recap.stat.charmed"), entry.stats.snakesCharmed],
+    [t("recap.stat.slides"), entry.stats.snakesSlid],
+    [t("recap.stat.rolls"), entry.stats.rolls],
   ];
+  // The skips-used line renders only when a budget was configured — an
+  // unlimited-skip game never guilt-trips (§4.8). Older entries have no
+  // budget recorded, so they stay quiet too.
+  if (typeof entry.skipsPerPlayer === "number") {
+    stats.push([t("recap.stat.skips"), entry.stats.skipsUsed ?? 0]);
+  }
 
   return (
     <main className="mx-auto max-w-md px-6 pb-16 text-center">
       <p className="text-5xl">🏁</p>
-      <h1 className="font-display mt-3 text-4xl text-blush">{entry.winnerName} made it!</h1>
+      {/* The playful "first to the finish" nod — the app's only winner
+          mention, celebration without win/lose framing (§4.8). */}
+      <h1 className="font-display mt-3 text-4xl text-blush">
+        {t("recap.headline", { name: entry.winnerName })}
+      </h1>
       <p className="mt-2 text-sm text-mist">
-        A <span className="capitalize">{entry.tier}</span> journey, finished together.
+        {t("recap.subtitle", { tier: t(`tier.${entry.tier}`) })}
       </p>
 
       <div className="mt-8 grid grid-cols-2 gap-3">
@@ -59,16 +79,17 @@ function Recap() {
           to="/play/setup"
           className="rounded-full bg-ember py-4 text-lg font-semibold text-midnight shadow-lg shadow-ember/25"
         >
-          Play again
+          {t("recap.again")}
         </Link>
-        <Link to="/" className="rounded-full bg-plum py-3 text-sm text-mist hover:text-blush">
-          Home
+        <Link
+          to="/"
+          className="rounded-full bg-plum py-3 text-sm text-mist hover:text-blush"
+        >
+          {t("recap.home")}
         </Link>
       </div>
 
-      <p className="mt-6 text-[10px] text-mist/50">
-        This recap lives only on this phone. What you said and did isn't stored anywhere.
-      </p>
+      <p className="mt-6 text-[10px] text-mist/50">{t("recap.privacy")}</p>
     </main>
   );
 }

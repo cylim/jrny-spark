@@ -1,12 +1,17 @@
 import { internalMutation } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { STARTER_DECKS } from "./starterDecks";
+import { STARTER_DECKS, type StarterText } from "./starterDecks";
+
+/** Normalize authored text (plain English or localized map) to the DB shape. */
+const toLocalized = (text: StarterText) =>
+  typeof text === "string" ? { en: text } : text;
 
 /**
  * Idempotent starter-deck seeding. Run with:
  *   bun run seed        (alias for `convex run seed:seedDecks`)
  * Re-running replaces each starter deck's prompts with the current content
- * of convex/starterDecks.ts — safe to use as the deck-iteration workflow.
+ * of convex/starterDecks.ts — safe to use as the deck-iteration workflow,
+ * and as the migration that rewrites pre-i18n rows in the localized shape.
  */
 export const seedDecks = internalMutation({
   args: {},
@@ -19,8 +24,8 @@ export const seedDecks = internalMutation({
 
       const meta = {
         slug: deck.slug,
-        title: deck.title,
-        description: deck.description,
+        title: toLocalized(deck.title),
+        description: toLocalized(deck.description),
         tier: deck.tier,
         isPremium: false,
         isActive: true,
@@ -41,7 +46,11 @@ export const seedDecks = internalMutation({
       }
 
       for (const prompt of deck.prompts) {
-        await ctx.db.insert("prompts", { deckId, ...prompt });
+        await ctx.db.insert("prompts", {
+          deckId,
+          ...prompt,
+          text: toLocalized(prompt.text),
+        });
       }
     }
     return { decks: STARTER_DECKS.length };

@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { drawPrompt } from "./draw";
+import { drawPrompt, isZoneExhausted } from "./draw";
 import type { Prompt, PromptKind, Zone } from "./types";
 
-const prompt = (id: string, zone: Zone, kind: PromptKind = "question"): Prompt => ({
+const prompt = (
+  id: string,
+  zone: Zone,
+  kind: PromptKind = "question"
+): Prompt => ({
   id,
   zone,
   kind,
@@ -37,5 +41,23 @@ describe("drawPrompt", () => {
     for (const rng of SWEEP) {
       expect(drawPrompt(solo, 2, ["only"], rng)?.id).toBe("only");
     }
+  });
+});
+
+describe("isZoneExhausted", () => {
+  it("is false while unused cards remain", () => {
+    expect(isZoneExhausted(ZONE1, 1, ["a", "b"])).toBe(false);
+  });
+
+  it("is true once every card in a multi-card zone has been drawn", () => {
+    expect(isZoneExhausted(ZONE1, 1, ["a", "b", "c"])).toBe(true);
+  });
+
+  it("never fires for a single-card zone — a reshuffle couldn't help", () => {
+    expect(isZoneExhausted([prompt("only", 2)], 2, ["only"])).toBe(false);
+  });
+
+  it("never fires for a zone the deck doesn't cover — the draw falls back cross-zone", () => {
+    expect(isZoneExhausted(ZONE1, 2, [])).toBe(false);
   });
 });

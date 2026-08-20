@@ -83,7 +83,9 @@ function Settings() {
             </Show>
           </>
         ) : (
-          <p className="text-sm text-mist">{t("settings.account.demo")}</p>
+          <p className="text-sm text-mist">
+            {t("settings.account.unconfigured")}
+          </p>
         )}
       </Section>
 

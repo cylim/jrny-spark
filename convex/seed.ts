@@ -36,11 +36,15 @@ export const seedDecks = internalMutation({
       if (existing) {
         await ctx.db.patch(existing._id, meta);
         deckId = existing._id;
-        const oldPrompts = await ctx.db
-          .query("prompts")
-          .withIndex("by_deckId", (q) => q.eq("deckId", deckId))
-          .collect();
-        for (const p of oldPrompts) await ctx.db.delete(p._id);
+        // Bounded batches until dry — never an unbounded collect().
+        for (;;) {
+          const oldPrompts = await ctx.db
+            .query("prompts")
+            .withIndex("by_deckId", (q) => q.eq("deckId", deckId))
+            .take(200);
+          if (oldPrompts.length === 0) break;
+          for (const p of oldPrompts) await ctx.db.delete(p._id);
+        }
       } else {
         deckId = await ctx.db.insert("decks", meta);
       }

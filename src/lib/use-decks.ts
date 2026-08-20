@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Prompt, Tier } from "~/game/types";
-import { DEMO_DECK_SLUG, demoDeckMeta, demoPrompts } from "~/game/demo-deck";
+import {
+  SAMPLE_DECK_SLUG,
+  sampleDeckMeta,
+  sampleDeckPrompts,
+} from "~/game/sample-deck";
 import { hasConvex } from "~/env";
 import { useI18n } from "~/lib/i18n";
 import { cacheDeck, cacheDeckList, getCachedDeck } from "./storage";
@@ -16,7 +20,7 @@ export interface DeckMeta {
   promptCount: number;
 }
 
-/** Server decks (when Convex is configured) plus the built-in demo deck. */
+/** Server decks (when Convex is configured) plus the built-in Sample Deck. */
 export function useDeckList(): DeckMeta[] {
   const { locale } = useI18n();
   const server = useQuery(api.decks.list, hasConvex ? { locale } : "skip");
@@ -48,23 +52,24 @@ export function useDeckList(): DeckMeta[] {
     }
   }, [server]);
 
-  return [...serverDecks, demoDeckMeta(locale)];
+  return [...serverDecks, sampleDeckMeta(locale)];
 }
 
 /**
  * Prompt pool for a deck: Convex when reachable, IndexedDB cache when
- * offline, bundled demo deck for the demo slug. `null` = loading or
+ * offline, the bundled Sample Deck for its own slug. `null` = loading or
  * unavailable — callers keep the dice disabled.
  *
  * Tier is a consent boundary (PRD §2.2): a missing/deactivated deck falls
  * back to the same-deck IndexedDB cache or blocks — NEVER to a different
- * deck's prompts. The sweet demo deck is only ever a fallback in demo mode
- * (no backend), where falling DOWN in intensity is the safe direction.
+ * deck's prompts. The sweet Sample Deck is only ever a fallback when no
+ * backend is configured, where falling DOWN in intensity is the safe
+ * direction.
  */
 export function usePromptPool(slug: string | undefined): Prompt[] | null {
   const { locale } = useI18n();
-  const isDemo = slug === DEMO_DECK_SLUG;
-  const skip = isDemo || !slug || !hasConvex;
+  const isSample = slug === SAMPLE_DECK_SLUG;
+  const skip = isSample || !slug || !hasConvex;
   const server = useQuery(
     api.decks.getPrompts,
     skip ? "skip" : { slug, locale }
@@ -75,7 +80,7 @@ export function usePromptPool(slug: string | undefined): Prompt[] | null {
     // Reset first: after a mid-session deck switch (Advance, §4.7) the
     // previous deck's cache must never masquerade as the new slug's pool.
     setCached(null);
-    if (isDemo || !slug) return;
+    if (isSample || !slug) return;
     let alive = true;
     getCachedDeck(slug).then((p) => {
       if (alive && p) setCached(p);
@@ -83,7 +88,7 @@ export function usePromptPool(slug: string | undefined): Prompt[] | null {
     return () => {
       alive = false;
     };
-  }, [slug, isDemo]);
+  }, [slug, isSample]);
 
   useEffect(() => {
     if (!skip && slug && server && server.length > 0) {
@@ -92,10 +97,10 @@ export function usePromptPool(slug: string | undefined): Prompt[] | null {
   }, [server, slug, skip]);
 
   if (!slug) return null;
-  if (isDemo) return demoPrompts(locale);
+  if (isSample) return sampleDeckPrompts(locale);
   // Session from an old backend-connected install, running without Convex:
   // same-deck cache first; the sweet sample only as a last resort.
-  if (!hasConvex) return cached ?? demoPrompts(locale);
+  if (!hasConvex) return cached ?? sampleDeckPrompts(locale);
   // Deck deactivated/unknown server-side: same-deck cache, or block (null).
   if (server === null) return cached;
   return server ?? cached; // undefined while loading/offline → cache → null

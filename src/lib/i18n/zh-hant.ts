@@ -41,7 +41,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "setup.deck.cards": "{count} 張卡",
   "setup.deck.noneConvex":
     "還沒有{tier}牌組——執行 `bun run seed` 載入入門牌組。",
-  "setup.deck.noneDemo": "示範模式還沒有{tier}牌組——將使用範例牌組。",
+  "setup.deck.noneSample": "還沒有{tier}牌組——將使用內建的範例牌組。",
   "setup.skips": "每人可跳過次數",
   "setup.skips.note":
     "「跳過」會換一張新卡。直接把卡收起來（略過）永遠不限次數。",
@@ -112,7 +112,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "settings.account.signedIn": "已登入——你的模板會同步。",
   "settings.account.why": "只有儲存模板時才需要。",
   "settings.account.signIn": "登入",
-  "settings.account.demo": "尚未設定登入(示範模式)——請參考 README。",
+  "settings.account.unconfigured": "尚未設定登入——請參考 README。",
   "settings.language": "語言",
   "settings.content": "內容",
   "settings.age": "18+ 確認:",
@@ -140,10 +140,10 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "templates.new": "+ 新增",
   "templates.blurb":
     "模板只保存設定——棋盤、牌組和你釘選的卡片。絕不包含遊戲過程。",
-  "templates.demo.before":
-    "雲端儲存需要設定 Clerk + Convex(目前為示範模式)。你仍然可以在",
-  "templates.demo.link": "新增模板",
-  "templates.demo.after": "建立並遊玩模板。",
+  "templates.unconfigured.before":
+    "雲端儲存需要設定 Clerk + Convex。你仍然可以在",
+  "templates.unconfigured.link": "新增模板",
+  "templates.unconfigured.after": "建立並遊玩模板。",
   "templates.signIn.note": "登入後,你的模板在每台裝置上都能使用。",
   "templates.signIn": "登入",
   "templates.loading": "載入中…",
@@ -164,7 +164,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "builder.name.placeholder": "週年紀念特別版",
   "builder.tier": "強度",
   "builder.deck": "牌組",
-  "builder.deck.demo": "示範牌組",
+  "builder.deck.sample": "範例牌組",
   "builder.skips": "每人可跳過次數",
   "builder.pins": "釘選的卡片",
   "builder.pins.add": "+ 新增卡片",
@@ -184,7 +184,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "builder.saving": "儲存中…",
   "builder.save.error": "無法儲存——請確認網路連線與登入狀態,再試一次。",
   "builder.save.signIn": "登入以儲存這個模板",
-  "builder.save.demo": "儲存需要設定 Clerk + Convex——遊玩現在就可以。",
+  "builder.save.unconfigured": "儲存需要設定 Clerk + Convex——遊玩現在就可以。",
 
   "privacy.title": "隱私,說清楚",
   "privacy.intro.before":

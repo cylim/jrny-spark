@@ -22,7 +22,7 @@ export interface AdvanceOption {
  * only when its prompts are actually obtainable right now — server when
  * reachable, IndexedDB cache when offline. Never offered at spicy, and never
  * backed by a different tier's cards: escalation must not degrade into the
- * demo-deck fallback, so this deliberately bypasses usePromptPool.
+ * Sample Deck fallback, so this deliberately bypasses usePromptPool.
  */
 export function useAdvanceOption(
   state: GameState | null | undefined

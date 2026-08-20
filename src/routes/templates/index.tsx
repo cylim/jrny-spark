@@ -33,11 +33,11 @@ function Templates() {
 
       {!hasClerk || !hasConvex ? (
         <div className="mt-6 rounded-2xl bg-plum p-5 text-sm text-mist">
-          {t("templates.demo.before")}
+          {t("templates.unconfigured.before")}
           <Link to="/templates/new" className="underline">
-            {t("templates.demo.link")}
+            {t("templates.unconfigured.link")}
           </Link>
-          {t("templates.demo.after")}
+          {t("templates.unconfigured.after")}
         </div>
       ) : (
         <>

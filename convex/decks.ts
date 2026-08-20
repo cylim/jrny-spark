@@ -15,11 +15,18 @@ export function localize(text: DisplayText, locale?: Locale): string {
   return (locale && text[locale]) || text.en;
 }
 
+// Read bounds. The catalog is curated (a handful of starter decks; PRD
+// tops out at tens), and the prompt cap is far above the authoring bar
+// (~30 cards/deck) — the game needs a deck's ENTIRE pool, so the cap is a
+// safety bound, not pagination. Keep seeded content under it.
+const MAX_DECKS = 100;
+export const MAX_PROMPTS_PER_DECK = 1000;
+
 /** Deck metadata for pickers — public, never includes prompt text. */
 export const list = query({
   args: { locale: v.optional(localeValidator) },
   handler: async (ctx, { locale }) => {
-    const decks = await ctx.db.query("decks").collect();
+    const decks = await ctx.db.query("decks").take(MAX_DECKS);
     return decks
       .filter((d) => d.isActive)
       .map(
@@ -68,7 +75,7 @@ export const getPrompts = query({
     const prompts = await ctx.db
       .query("prompts")
       .withIndex("by_deckId", (q) => q.eq("deckId", deck._id))
-      .collect();
+      .take(MAX_PROMPTS_PER_DECK);
 
     return prompts.map((p) => ({
       id: p._id as string,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { GameState, Tier } from "~/game/types";
 import { createSession, DEFAULT_SKIP_BUDGET } from "~/game/engine";
-import { DEMO_DECK_SLUG } from "~/game/demo-deck";
+import { SAMPLE_DECK_SLUG } from "~/game/sample-deck";
 import { useDeckList } from "~/lib/use-decks";
 import {
   loadPrefs,
@@ -67,7 +67,7 @@ function Setup() {
     ];
     const config = {
       tier,
-      deckSlug: chosenDeck?.slug ?? DEMO_DECK_SLUG,
+      deckSlug: chosenDeck?.slug ?? SAMPLE_DECK_SLUG,
       playerNames,
       boardPresetId: "classic",
       skipsPerPlayer: skips,
@@ -186,9 +186,12 @@ function Setup() {
           ))}
           {tierDecks.length === 0 && (
             <div className="rounded-2xl bg-plum p-4 text-sm text-mist">
-              {t(hasConvex ? "setup.deck.noneConvex" : "setup.deck.noneDemo", {
-                tier: t(`tier.${tier}`),
-              })}
+              {t(
+                hasConvex ? "setup.deck.noneConvex" : "setup.deck.noneSample",
+                {
+                  tier: t(`tier.${tier}`),
+                }
+              )}
             </div>
           )}
         </div>

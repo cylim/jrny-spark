@@ -5,10 +5,10 @@ import { applyEvent, createSession } from "../src/game/engine";
 import { resolveDraw } from "../src/game/draw";
 import { CLASSIC } from "../src/game/board-presets";
 import { rollDie, seededRng } from "../src/game/rng";
-import { demoPrompts } from "../src/game/demo-deck";
+import { sampleDeckPrompts } from "../src/game/sample-deck";
 import type { GameState } from "../src/game/types";
 
-const DEMO_PROMPTS = demoPrompts("en");
+const DEMO_PROMPTS = sampleDeckPrompts("en");
 
 const GAMES = Number(process.argv[2] ?? 2000);
 const SECONDS_PER_CARD = 50; // rough authoring target: prompts resolvable in <2 min, most ~45-60s

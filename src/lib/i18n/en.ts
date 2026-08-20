@@ -48,8 +48,8 @@ export const en = {
   "setup.deck.cards": "{count} cards",
   "setup.deck.noneConvex":
     "No {tier} deck yet — run `bun run seed` to load the starter decks.",
-  "setup.deck.noneDemo":
-    "No {tier} deck yet in demo mode — the sample deck will be used.",
+  "setup.deck.noneSample":
+    "No {tier} deck yet — the built-in Sample Deck will be used.",
   "setup.skips": "Skips per player",
   "setup.skips.note":
     "A Skip trades a card for a fresh one. Putting a card away without a redraw (Pass) is always free.",
@@ -129,7 +129,7 @@ export const en = {
   "settings.account.signedIn": "Signed in — your Templates sync.",
   "settings.account.why": "Only needed to save your Templates.",
   "settings.account.signIn": "Sign in",
-  "settings.account.demo": "Sign-in not configured (demo mode) — see README.",
+  "settings.account.unconfigured": "Sign-in not configured — see README.",
   "settings.language": "Language",
   "settings.content": "Content",
   "settings.age": "18+ confirmation:",
@@ -160,10 +160,10 @@ export const en = {
   "templates.new": "+ New",
   "templates.blurb":
     "Templates hold setups only — boards, decks and your pinned cards. Never what happened while playing.",
-  "templates.demo.before":
-    "Cloud saves need Clerk + Convex configured (demo mode right now). You can still build and play Templates from ",
-  "templates.demo.link": "New Template",
-  "templates.demo.after": ".",
+  "templates.unconfigured.before":
+    "Cloud saves need Clerk + Convex configured. You can still build and play Templates from ",
+  "templates.unconfigured.link": "New Template",
+  "templates.unconfigured.after": ".",
   "templates.signIn.note": "Sign in to keep your Templates on every device.",
   "templates.signIn": "Sign in",
   "templates.loading": "Loading…",
@@ -185,7 +185,7 @@ export const en = {
   "builder.name.placeholder": "Anniversary special",
   "builder.tier": "Tier",
   "builder.deck": "Deck",
-  "builder.deck.demo": "Demo deck",
+  "builder.deck.sample": "Sample Deck",
   "builder.skips": "Skips per player",
   "builder.pins": "Pinned cards",
   "builder.pins.add": "+ Add card",
@@ -209,7 +209,7 @@ export const en = {
   "builder.save.error":
     "Couldn't save — check your connection and sign-in, then try again.",
   "builder.save.signIn": "Sign in to save this Template",
-  "builder.save.demo":
+  "builder.save.unconfigured":
     "Saving needs Clerk + Convex configured — playing works right now.",
 
   // — privacy —

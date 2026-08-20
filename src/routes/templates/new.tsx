@@ -8,7 +8,7 @@ import { hasClerk, hasConvex } from "~/env";
 import { createSession, DEFAULT_SKIP_BUDGET, zoneOf } from "~/game/engine";
 import { CLASSIC } from "~/game/board-presets";
 import { pinRejection, type PinRejection } from "~/game/pins";
-import { DEMO_DECK_SLUG } from "~/game/demo-deck";
+import { SAMPLE_DECK_SLUG } from "~/game/sample-deck";
 import type { Prompt, PromptKind, Tier } from "~/game/types";
 import { useDeckList } from "~/lib/use-decks";
 import { saveSession } from "~/lib/storage";
@@ -65,7 +65,7 @@ function NewTemplate() {
   const chosenSlug =
     tierDecks.find((d) => d.slug === deckSlug)?.slug ??
     tierDecks[0]?.slug ??
-    DEMO_DECK_SLUG;
+    SAMPLE_DECK_SLUG;
   const rowIssues = rows.map(pinIssue);
   const validRows = rows.filter(
     (r, i) => r.text.trim() && rowIssues[i] === null
@@ -184,7 +184,9 @@ function NewTemplate() {
               </option>
             ))}
             {tierDecks.length === 0 && (
-              <option value={DEMO_DECK_SLUG}>{t("builder.deck.demo")}</option>
+              <option value={SAMPLE_DECK_SLUG}>
+                {t("builder.deck.sample")}
+              </option>
             )}
           </select>
         </label>
@@ -315,7 +317,7 @@ function NewTemplate() {
           </>
         ) : (
           <p className="text-center text-xs text-mist/60">
-            {t("builder.save.demo")}
+            {t("builder.save.unconfigured")}
           </p>
         )}
       </div>

@@ -43,8 +43,8 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "setup.deck.cards": "카드 {count}장",
   "setup.deck.noneConvex":
     "아직 {tier} 덱이 없어요 — `bun run seed`로 스타터 덱을 불러오세요.",
-  "setup.deck.noneDemo":
-    "데모 모드에는 아직 {tier} 덱이 없어요 — 샘플 덱으로 진행돼요.",
+  "setup.deck.noneSample":
+    "아직 {tier} 덱이 없어요 — 내장된 샘플 덱으로 진행돼요.",
   "setup.skips": "1인당 스킵 횟수",
   "setup.skips.note":
     "스킵은 카드를 새 카드로 바꿔요. 카드를 그냥 덮어두는 패스는 언제나 무제한이에요.",
@@ -118,8 +118,8 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "settings.account.signedIn": "로그인됨 — 템플릿이 동기화돼요.",
   "settings.account.why": "템플릿을 저장할 때만 필요해요.",
   "settings.account.signIn": "로그인",
-  "settings.account.demo":
-    "로그인이 설정되지 않았어요(데모 모드) — README를 참고하세요.",
+  "settings.account.unconfigured":
+    "로그인이 설정되지 않았어요 — README를 참고하세요.",
   "settings.language": "언어",
   "settings.content": "콘텐츠",
   "settings.age": "18+ 확인:",
@@ -148,10 +148,10 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "templates.new": "+ 새로 만들기",
   "templates.blurb":
     "템플릿에는 설정만 담겨요 — 보드, 덱, 직접 꽂아 둔 카드. 게임 중에 있었던 일은 절대 담기지 않아요.",
-  "templates.demo.before":
-    "클라우드 저장에는 Clerk + Convex 설정이 필요해요(지금은 데모 모드). 저장 없이도 ",
-  "templates.demo.link": "새 템플릿",
-  "templates.demo.after": "에서 만들고 플레이할 수 있어요.",
+  "templates.unconfigured.before":
+    "클라우드 저장에는 Clerk + Convex 설정이 필요해요. 저장 없이도 ",
+  "templates.unconfigured.link": "새 템플릿",
+  "templates.unconfigured.after": "에서 만들고 플레이할 수 있어요.",
   "templates.signIn.note": "로그인하면 어느 기기에서든 템플릿을 쓸 수 있어요.",
   "templates.signIn": "로그인",
   "templates.loading": "불러오는 중…",
@@ -172,7 +172,7 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "builder.name.placeholder": "기념일 스페셜",
   "builder.tier": "단계",
   "builder.deck": "덱",
-  "builder.deck.demo": "데모 덱",
+  "builder.deck.sample": "샘플 덱",
   "builder.skips": "1인당 스킵 횟수",
   "builder.pins": "꽂은 카드",
   "builder.pins.add": "+ 카드 추가",
@@ -195,7 +195,7 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "builder.save.error":
     "저장하지 못했어요 — 연결과 로그인을 확인하고 다시 시도해 주세요.",
   "builder.save.signIn": "로그인하고 이 템플릿 저장하기",
-  "builder.save.demo":
+  "builder.save.unconfigured":
     "저장에는 Clerk + Convex 설정이 필요해요 — 플레이는 지금도 가능해요.",
 
   "privacy.title": "쉽게 읽는 개인정보 이야기",

@@ -3,6 +3,7 @@ import type {
   BoardPreset,
   GameEvent,
   GameState,
+  Prompt,
   SessionConfig,
   Zone,
 } from "./types";
@@ -58,10 +59,9 @@ export function applyEvent(preset: BoardPreset, state: GameState, event: GameEve
         activeCard: card,
         pendingDraw: null,
         pendingSnake: event.reason === "charm" ? null : state.pendingSnake,
-        usedPromptIds: {
-          ...state.usedPromptIds,
-          [event.prompt.zone]: [...state.usedPromptIds[event.prompt.zone], event.prompt.id],
-        },
+        usedPromptIds: isPinDraw(state, event.prompt, event.reason)
+          ? state.usedPromptIds
+          : trackUsed(state.usedPromptIds, event.prompt),
         stats: {
           ...state.stats,
           cardsDrawn: state.stats.cardsDrawn + 1,
@@ -143,11 +143,41 @@ function handleRoll(preset: BoardPreset, state: GameState, value: number): GameS
 
   const moved = { ...base, players: movePlayer(state.players, state.current, dest) };
 
-  if (preset.neutralTiles.includes(dest)) {
+  // A pin converts a Neutral Tile into a prompt tile — checked first so a
+  // pinned card is never silently dropped by the breather rule.
+  const pinned = state.config.tilePrompts?.[dest] !== undefined;
+  if (!pinned && preset.neutralTiles.includes(dest)) {
     return passTurn(moved);
   }
 
   return { ...moved, phase: "prompt", pendingDraw: { zone: zoneOf(dest), reason: "tile" } };
+}
+
+/**
+ * Pins live outside the deck cycle: they may legitimately fire again on a
+ * revisit and must never be mistaken for a reshuffle. Mirrors the pin check
+ * in draw.ts (`resolveDraw`).
+ */
+function isPinDraw(state: GameState, prompt: Prompt, reason: ActiveCard["reason"]): boolean {
+  if (reason !== "tile") return false;
+  const tile = state.players[state.current].position;
+  return state.config.tilePrompts?.[tile]?.id === prompt.id;
+}
+
+/**
+ * A drawn card already on its zone's used list means the pool was exhausted
+ * and draw.ts reshuffled — reset to a fresh no-repeat cycle seeded with this
+ * card, so nothing repeats until the new pass is itself exhausted.
+ */
+function trackUsed(
+  usedPromptIds: GameState["usedPromptIds"],
+  prompt: Prompt,
+): GameState["usedPromptIds"] {
+  const used = usedPromptIds[prompt.zone];
+  return {
+    ...usedPromptIds,
+    [prompt.zone]: used.includes(prompt.id) ? [prompt.id] : [...used, prompt.id],
+  };
 }
 
 function movePlayer(

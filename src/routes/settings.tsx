@@ -34,12 +34,12 @@ function Settings() {
             <Show when="signed-in">
               <div className="flex items-center gap-3">
                 <UserButton />
-                <p className="text-sm text-mist">Signed in — your saved games sync.</p>
+                <p className="text-sm text-mist">Signed in — your Templates sync.</p>
               </div>
             </Show>
             <Show when="signed-out">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-mist">Only needed to save custom games.</p>
+                <p className="text-sm text-mist">Only needed to save your Templates.</p>
                 <SignInButton mode="modal">
                   <button type="button" className="rounded-full bg-ember px-5 py-2 text-sm font-semibold text-midnight">
                     Sign in

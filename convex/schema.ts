@@ -2,6 +2,11 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export const tierValidator = v.union(v.literal("sweet"), v.literal("flirty"), v.literal("spicy"));
+
+const purchaseBase = v.object({
+  userId: v.string(), // stable auth identity (identity.tokenIdentifier)
+  stripeSessionId: v.string(),
+});
 export const kindValidator = v.union(
   v.literal("question"),
   v.literal("action"),
@@ -9,9 +14,10 @@ export const kindValidator = v.union(
 );
 export const zoneValidator = v.union(v.literal(1), v.literal(2), v.literal(3));
 
-// PRIVACY LINE (PRD §2.1): these tables hold identity, purchases and saved
-// game CONFIGS only. No table ever stores live sessions, drawn cards,
-// answers, or player names — and no function accepts such payloads.
+// PRIVACY LINE (PRD §2.1): these tables hold identity, purchases and Game
+// Templates (saved configurations) only. No table ever stores live sessions,
+// drawn cards, answers, or player names — and no function accepts such
+// payloads.
 export default defineSchema({
   decks: defineTable({
     slug: v.string(), // "starter-sweet"
@@ -31,14 +37,16 @@ export default defineSchema({
     kind: kindValidator,
     text: v.string(),
     props: v.optional(v.boolean()),
-  }).index("by_deck", ["deckId"]),
+  }).index("by_deckId", ["deckId"]),
 
-  games: defineTable({
-    userId: v.string(), // Clerk user id (identity.subject)
+  gameTemplates: defineTable({
+    userId: v.string(), // stable auth identity (identity.tokenIdentifier)
     name: v.string(),
-    tier: tierValidator,
+    tier: tierValidator, // derived server-side from the Deck — never client-declared
     deckSlug: v.string(),
     boardPreset: v.string(), // "classic" for MVP
+    // Bounded by save(): ≤ 100 pins × ≤ 280 chars (~30 KB worst case).
+    // Re-evaluate this inline array before ever lifting the mutation caps.
     customPrompts: v.array(
       v.object({
         tile: v.number(),
@@ -46,14 +54,16 @@ export default defineSchema({
         kind: kindValidator,
       }),
     ),
-  }).index("by_user", ["userId"]),
+  }).index("by_userId", ["userId"]),
 
-  purchases: defineTable({
-    // Phase 2 — schema reserved, unused in MVP (PRD §6.5)
-    userId: v.string(),
-    deckSlug: v.string(),
-    stripeSessionId: v.string(),
-  })
-    .index("by_user", ["userId"])
-    .index("by_user_deck", ["userId", "deckSlug"]),
+  // Phase 2 — schema reserved, unused in MVP (PRD §6.5). `kind` discriminates
+  // deck unlocks from future feature purchases; only deck rows reference a deck.
+  purchases: defineTable(
+    v.union(
+      purchaseBase.extend({ kind: v.literal("deck"), deckSlug: v.string() }),
+      purchaseBase.extend({ kind: v.literal("feature") }),
+    ),
+  )
+    .index("by_userId", ["userId"])
+    .index("by_userId_and_deckSlug", ["userId", "deckSlug"]),
 });

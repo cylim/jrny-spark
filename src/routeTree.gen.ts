@@ -13,11 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as GamesIndexRouteImport } from './routes/games/index'
-import { Route as GamesNewRouteImport } from './routes/games/new'
 import { Route as PlayIndexRouteImport } from './routes/play/index'
 import { Route as PlayRecapRouteImport } from './routes/play/recap'
 import { Route as PlaySetupRouteImport } from './routes/play/setup'
+import { Route as TemplatesIndexRouteImport } from './routes/templates/index'
+import { Route as TemplatesNewRouteImport } from './routes/templates/new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -39,16 +39,6 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GamesIndexRoute = GamesIndexRouteImport.update({
-  id: '/games/',
-  path: '/games/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GamesNewRoute = GamesNewRouteImport.update({
-  id: '/games/new',
-  path: '/games/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PlayIndexRoute = PlayIndexRouteImport.update({
   id: '/play/',
   path: '/play/',
@@ -64,28 +54,38 @@ const PlaySetupRoute = PlaySetupRouteImport.update({
   path: '/play/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TemplatesIndexRoute = TemplatesIndexRouteImport.update({
+  id: '/templates/',
+  path: '/templates/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TemplatesNewRoute = TemplatesNewRouteImport.update({
+  id: '/templates/new',
+  path: '/templates/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/sign-in': typeof SignInRoute
-  '/games/new': typeof GamesNewRoute
   '/play/recap': typeof PlayRecapRoute
   '/play/setup': typeof PlaySetupRoute
-  '/games/': typeof GamesIndexRoute
+  '/templates/new': typeof TemplatesNewRoute
   '/play/': typeof PlayIndexRoute
+  '/templates/': typeof TemplatesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/sign-in': typeof SignInRoute
-  '/games/new': typeof GamesNewRoute
   '/play/recap': typeof PlayRecapRoute
   '/play/setup': typeof PlaySetupRoute
-  '/games': typeof GamesIndexRoute
+  '/templates/new': typeof TemplatesNewRoute
   '/play': typeof PlayIndexRoute
+  '/templates': typeof TemplatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,11 +93,11 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/settings': typeof SettingsRoute
   '/sign-in': typeof SignInRoute
-  '/games/new': typeof GamesNewRoute
   '/play/recap': typeof PlayRecapRoute
   '/play/setup': typeof PlaySetupRoute
-  '/games/': typeof GamesIndexRoute
+  '/templates/new': typeof TemplatesNewRoute
   '/play/': typeof PlayIndexRoute
+  '/templates/': typeof TemplatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -106,33 +106,33 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/settings'
     | '/sign-in'
-    | '/games/new'
     | '/play/recap'
     | '/play/setup'
-    | '/games/'
+    | '/templates/new'
     | '/play/'
+    | '/templates/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/privacy'
     | '/settings'
     | '/sign-in'
-    | '/games/new'
     | '/play/recap'
     | '/play/setup'
-    | '/games'
+    | '/templates/new'
     | '/play'
+    | '/templates'
   id:
     | '__root__'
     | '/'
     | '/privacy'
     | '/settings'
     | '/sign-in'
-    | '/games/new'
     | '/play/recap'
     | '/play/setup'
-    | '/games/'
+    | '/templates/new'
     | '/play/'
+    | '/templates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -140,11 +140,11 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SettingsRoute: typeof SettingsRoute
   SignInRoute: typeof SignInRoute
-  GamesNewRoute: typeof GamesNewRoute
   PlayRecapRoute: typeof PlayRecapRoute
   PlaySetupRoute: typeof PlaySetupRoute
-  GamesIndexRoute: typeof GamesIndexRoute
+  TemplatesNewRoute: typeof TemplatesNewRoute
   PlayIndexRoute: typeof PlayIndexRoute
+  TemplatesIndexRoute: typeof TemplatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -177,20 +177,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/games/': {
-      id: '/games/'
-      path: '/games'
-      fullPath: '/games/'
-      preLoaderRoute: typeof GamesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/games/new': {
-      id: '/games/new'
-      path: '/games/new'
-      fullPath: '/games/new'
-      preLoaderRoute: typeof GamesNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/play/': {
       id: '/play/'
       path: '/play'
@@ -212,6 +198,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaySetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/templates/': {
+      id: '/templates/'
+      path: '/templates'
+      fullPath: '/templates/'
+      preLoaderRoute: typeof TemplatesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/templates/new': {
+      id: '/templates/new'
+      path: '/templates/new'
+      fullPath: '/templates/new'
+      preLoaderRoute: typeof TemplatesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -220,11 +220,11 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SettingsRoute: SettingsRoute,
   SignInRoute: SignInRoute,
-  GamesNewRoute: GamesNewRoute,
   PlayRecapRoute: PlayRecapRoute,
   PlaySetupRoute: PlaySetupRoute,
-  GamesIndexRoute: GamesIndexRoute,
+  TemplatesNewRoute: TemplatesNewRoute,
   PlayIndexRoute: PlayIndexRoute,
+  TemplatesIndexRoute: TemplatesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

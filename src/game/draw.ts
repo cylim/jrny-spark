@@ -30,7 +30,7 @@ export function drawPrompt(
 }
 
 /**
- * Resolve `state.pendingDraw` into a concrete prompt. Custom games can pin
+ * Resolve `state.pendingDraw` into a concrete prompt. Game Templates can pin
  * a prompt to the landed tile; pinned prompts trump the deck for plain tile
  * draws (never for ladder/charm cards). Returns null when there is nothing
  * pending or the pool is empty.

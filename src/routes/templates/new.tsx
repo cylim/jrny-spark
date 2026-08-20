@@ -6,6 +6,8 @@ import { ConvexError } from "convex/values";
 import { api } from "../../../convex/_generated/api";
 import { hasClerk, hasConvex } from "~/env";
 import { createSession, zoneOf } from "~/game/engine";
+import { CLASSIC } from "~/game/board-presets";
+import { pinRejection, type PinRejection } from "~/game/pins";
 import { DEMO_DECK_SLUG } from "~/game/demo-deck";
 import type { Prompt, PromptKind, Tier } from "~/game/types";
 import { useDeckList } from "~/lib/use-decks";
@@ -20,6 +22,19 @@ interface CustomRow {
   tile: number;
   text: string;
   kind: PromptKind;
+}
+
+const PIN_MESSAGES: Record<PinRejection, string> = {
+  "out-of-range": "Pick a tile between 1 and 99.",
+  "snake-head": "That's a snake head — the slide would swallow this card.",
+  "ladder-foot": "That's a ladder foot — the climb would skip this card.",
+  finish: "The finish tile ends the game — no card can fire there.",
+};
+
+/** The builder pins onto the classic board only (boardPreset is hardcoded below). */
+function pinIssue(row: CustomRow): string | null {
+  const rejection = pinRejection(CLASSIC, row.tile);
+  return rejection ? PIN_MESSAGES[rejection] : null;
 }
 
 function NewTemplate() {
@@ -44,7 +59,11 @@ function NewTemplate() {
 
   const tierDecks = decks.filter((d) => d.tier === tier);
   const chosenSlug = tierDecks.find((d) => d.slug === deckSlug)?.slug ?? tierDecks[0]?.slug ?? DEMO_DECK_SLUG;
-  const validRows = rows.filter((r) => r.text.trim() && r.tile >= 2 && r.tile <= 99);
+  const rowIssues = rows.map(pinIssue);
+  const validRows = rows.filter((r, i) => r.text.trim() && rowIssues[i] === null);
+  // Refuse to proceed while a written card sits on a forbidden tile — dropping
+  // it silently is exactly the bug pins are meant to escape.
+  const blocked = rows.some((r, i) => r.text.trim() && rowIssues[i] !== null);
 
   const toTilePrompts = (): Record<number, Prompt> => {
     const out: Record<number, Prompt> = {};
@@ -173,7 +192,7 @@ function NewTemplate() {
                   Tile
                   <input
                     type="number"
-                    min={2}
+                    min={1}
                     max={99}
                     value={row.tile}
                     onChange={(e) => update(i, { tile: Number(e.target.value) })}
@@ -205,6 +224,9 @@ function NewTemplate() {
                 maxLength={280}
                 className="mt-2 w-full rounded-lg bg-plum-light px-3 py-2 text-sm text-blush placeholder:text-mist/40"
               />
+              {row.text.trim() !== "" && rowIssues[i] && (
+                <p className="mt-1 text-xs text-ember-soft">{rowIssues[i]}</p>
+              )}
             </div>
           ))}
         </div>
@@ -214,17 +236,23 @@ function NewTemplate() {
         <button
           type="button"
           onClick={playNow}
-          className="rounded-full bg-ember py-4 text-lg font-semibold text-midnight shadow-lg shadow-ember/25 active:scale-95"
+          disabled={blocked}
+          className="rounded-full bg-ember py-4 text-lg font-semibold text-midnight shadow-lg shadow-ember/25 active:scale-95 disabled:opacity-50"
         >
           Play now
         </button>
+        {blocked && (
+          <p className="text-center text-xs text-ember-soft">
+            Move the flagged cards to open tiles first.
+          </p>
+        )}
         {hasClerk && hasConvex ? (
           <>
             <Show when="signed-in">
               <button
                 type="button"
                 onClick={save}
-                disabled={saving}
+                disabled={saving || blocked}
                 className="rounded-full bg-plum-light py-3 text-sm text-blush disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save to My Templates"}

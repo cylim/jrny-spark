@@ -5,23 +5,26 @@ journey (snakes & ladders with a twist) where the cards do the real work.
 Live target: **spark.jrny.app**.
 
 📄 **Read [PRD.md](./PRD.md) first** — product scope, game design, the
-privacy line, and architecture decisions all live there.
+privacy line, and architecture decisions all live there. Vocabulary follows
+[CONTEXT.md](./CONTEXT.md); the privacy boundary is
+[ADR 0001](./docs/adr/0001-play-data-never-leaves-the-device.md).
 
 ## Stack
 
 TanStack Start (React 19, Vite) · Convex · Clerk · Tailwind CSS v4 ·
 IndexedDB (`idb`) · Workbox PWA · Bun.
 
-## Quick start (zero config — demo mode)
+## Quick start (zero config)
 
 ```sh
 bun install
 bun dev            # http://localhost:3000
 ```
 
-With no env vars the app runs in **demo mode**: fully playable with a small
-bundled sample deck, no sign-in, no cloud saves. A dev-only banner reminds
-you what's unconfigured.
+With no env vars the app falls back to the bundled **Sample Deck**: fully
+playable, no sign-in, no cloud saves. A dev-only banner reminds you what's
+unconfigured. (The Sample Deck is a fallback, not a mode — it also covers a
+first-ever visit that happens offline.)
 
 ## Full setup
 
@@ -67,7 +70,7 @@ you what's unconfigured.
 
 ## Deploy (spark.jrny.app)
 
-Not wired yet — PRD §10.5. `bun run build` produces `dist/client` +
-`dist/server` and drops `sw.js` into `dist/client`. Host on
-Vercel/Netlify/Cloudflare, set `VITE_CONVEX_URL` + Clerk prod keys in build
-env, run `npx convex deploy` for the prod Convex deployment.
+Not wired yet — target is **Cloudflare Workers** (PRD §6.1). `bun run build`
+produces `dist/client` + `dist/server` and drops `sw.js` into `dist/client`.
+Set `VITE_CONVEX_URL` + Clerk prod keys in build env, run `npx convex deploy`
+for the prod Convex deployment.

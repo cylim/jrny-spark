@@ -3,8 +3,8 @@ import { defaultRng, type Rng } from "./rng";
 
 /**
  * Zone-aware draw without replacement. Falls back gracefully:
- * preferred kind → any kind in zone → reshuffle zone (ignore used) →
- * adjacent zones. Returns null only for an empty pool.
+ * preferred kind → any kind in zone → reshuffle zone (never the last card
+ * back-to-back) → adjacent zones. Returns null only for an empty pool.
  */
 export function drawPrompt(
   pool: Prompt[],
@@ -15,12 +15,14 @@ export function drawPrompt(
 ): Prompt | null {
   const used = new Set(usedIds);
   const inZone = pool.filter((p) => p.zone === zone);
+  const lastDrawn = usedIds[usedIds.length - 1];
 
   const candidates =
     firstNonEmpty(
       preferKind ? inZone.filter((p) => !used.has(p.id) && p.kind === preferKind) : [],
       inZone.filter((p) => !used.has(p.id)),
-      inZone, // zone exhausted this session — reshuffle
+      inZone.filter((p) => p.id !== lastDrawn), // zone exhausted — reshuffle, no back-to-back repeat
+      inZone, // single-card zone: a repeat is unavoidable
       pool.filter((p) => !used.has(p.id)),
       pool,
     ) ?? [];

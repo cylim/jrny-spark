@@ -3,9 +3,9 @@ import { Show, SignInButton } from "@clerk/tanstack-react-start";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { hasClerk, hasConvex } from "~/env";
-import { createSession, DEFAULT_SKIP_BUDGET, zoneOf } from "~/game/engine";
+import { DEFAULT_SKIP_BUDGET, zoneOf } from "~/game/engine";
 import type { Prompt } from "~/game/types";
-import { saveSession } from "~/lib/storage";
+import { beginSession } from "~/lib/begin-session";
 import { useAgeGate } from "~/lib/use-age-gate";
 import { useDeckList } from "~/lib/use-decks";
 import { useI18n } from "~/lib/i18n";
@@ -94,28 +94,22 @@ function TemplatesList() {
         text: p.text,
       };
     }
-    // Awaited — /play reads the session on mount (see setup.tsx).
-    await saveSession(
-      createSession(
-        {
-          tier: template.tier,
-          deckSlug: template.deckSlug,
-          playerNames: [
-            t("setup.players.placeholder", { n: 1 }),
-            t("setup.players.placeholder", { n: 2 }),
-          ],
-          boardPresetId: template.boardPreset,
-          tilePrompts,
-          // Templates saved before budgets existed play with the default;
-          // null (unlimited) must pass through untouched.
-          skipsPerPlayer:
-            template.skipsPerPlayer === undefined
-              ? DEFAULT_SKIP_BUDGET
-              : template.skipsPerPlayer,
-        },
-        Date.now()
-      )
-    );
+    await beginSession({
+      tier: template.tier,
+      deckSlug: template.deckSlug,
+      playerNames: [
+        t("setup.players.placeholder", { n: 1 }),
+        t("setup.players.placeholder", { n: 2 }),
+      ],
+      boardPresetId: template.boardPreset,
+      tilePrompts,
+      // Templates saved before budgets existed play with the default;
+      // null (unlimited) must pass through untouched.
+      skipsPerPlayer:
+        template.skipsPerPlayer === undefined
+          ? DEFAULT_SKIP_BUDGET
+          : template.skipsPerPlayer,
+    });
     navigate({ to: "/play" });
   };
 

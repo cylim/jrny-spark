@@ -26,16 +26,22 @@ export function onInstallAvailable(fn: () => void): () => void {
   return () => listeners.delete(fn);
 }
 
-export async function promptInstall(): Promise<boolean> {
-  if (!deferredPrompt) return false;
+export type InstallOutcome = "accepted" | "dismissed";
+
+/** Show the native install prompt; null when none is available. */
+export async function promptInstall(): Promise<InstallOutcome | null> {
+  if (!deferredPrompt) return null;
   await deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-  if (choice.outcome === "accepted") deferredPrompt = null;
-  return choice.outcome === "accepted";
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === "accepted") deferredPrompt = null;
+  return outcome;
 }
 
 export function isIos(): boolean {
-  return typeof navigator !== "undefined" && /iphone|ipad|ipod/i.test(navigator.userAgent);
+  return (
+    typeof navigator !== "undefined" &&
+    /iphone|ipad|ipod/i.test(navigator.userAgent)
+  );
 }
 
 export function isStandalone(): boolean {

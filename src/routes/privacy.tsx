@@ -41,6 +41,40 @@ function Privacy() {
         </div>
       </div>
 
+      {/* The analytics disclosure (§6.9): provider, what is and isn't
+          collected — mirrors src/lib/analytics/events.ts. */}
+      <section className="mt-6 rounded-2xl bg-plum p-4">
+        <h2 className="text-sm font-semibold text-blush">
+          {t("privacy.analytics.title")}
+        </h2>
+        <p className="mt-2 text-sm text-mist">{t("privacy.analytics.body")}</p>
+        <h3 className="mt-4 text-xs font-semibold uppercase tracking-wider text-emerald-300">
+          {t("privacy.analytics.collected.title")}
+        </h3>
+        <ul className="mt-1 list-inside list-disc text-sm text-mist">
+          <li>{t("privacy.analytics.collected.1")}</li>
+          <li>{t("privacy.analytics.collected.2")}</li>
+          <li>{t("privacy.analytics.collected.3")}</li>
+          <li>{t("privacy.analytics.collected.4")}</li>
+          <li>{t("privacy.analytics.collected.5")}</li>
+        </ul>
+        <h3 className="mt-4 text-xs font-semibold uppercase tracking-wider text-ember-soft">
+          {t("privacy.analytics.never.title")}
+        </h3>
+        <ul className="mt-1 list-inside list-disc text-sm text-mist">
+          <li>{t("privacy.analytics.never.1")}</li>
+          <li>{t("privacy.analytics.never.2")}</li>
+          <li>{t("privacy.analytics.never.3")}</li>
+        </ul>
+        <p className="mt-3 text-sm text-mist">
+          {t("privacy.analytics.optout.before")}
+          <Link to="/settings" className="underline">
+            {t("privacy.analytics.optout.link")}
+          </Link>
+          {t("privacy.analytics.optout.after")}
+        </p>
+      </section>
+
       <p className="mt-6 text-sm text-mist">
         {t("privacy.outro.before")}
         <Link to="/settings" className="underline">

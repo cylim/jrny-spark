@@ -10,6 +10,7 @@ import { Show, UserButton } from "@clerk/tanstack-react-start";
 import appCss from "../styles/app.css?url";
 import { Providers } from "~/components/Providers";
 import { RegisterSW } from "~/components/RegisterSW";
+import { Analytics } from "~/components/Analytics";
 import { SetupBanner } from "~/components/SetupBanner";
 import { useI18n } from "~/lib/i18n";
 import { hasClerk } from "~/env";
@@ -56,6 +57,7 @@ function RootComponent() {
         <Header />
         <Outlet />
         <RegisterSW />
+        <Analytics />
         <SetupBanner />
       </Providers>
     </RootDocument>

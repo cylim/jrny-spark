@@ -137,6 +137,12 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "settings.app.iosHint.add": "홈 화면에 추가",
   "settings.app.iosHint.after": "를 눌러 주세요.",
   "settings.app.eligible": "조건이 갖춰지면 브라우저가 설치를 제안할 거예요.",
+  "settings.usage": "사용 통계",
+  "settings.usage.toggle": "익명 사용 통계 보내기",
+  "settings.usage.body":
+    "횟수만 세요 — 게임이 시작됐다, 카드를 스킵했다 정도예요. 카드 내용, 플레이어 이름, 어떤 카드를 뽑았는지는 절대 보내지 않아요. 쿠키 없이 PostHog(미국)로 전송되며 언제든 끌 수 있어요.",
+  "settings.usage.on": "켜짐",
+  "settings.usage.off": "꺼짐",
   "settings.data": "내 데이터",
   "settings.data.body":
     "진행 중인 게임, 요약, 환경설정, 캐시된 덱은 모두 이 기기에만 있어요.",
@@ -213,11 +219,32 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "privacy.never.2": "어떤 카드를 뽑고, 답하고, 스킵했는지",
   "privacy.never.3": "플레이어 이름 — 기기 밖으로 나가지 않아요",
   "privacy.never.4": "답변, 메모, 사진 — 애초에 받을 방법 자체가 없어요",
+  "privacy.analytics.title": "익명 사용 통계 (PostHog, 미국)",
+  "privacy.analytics.body":
+    "Spark가 잘 작동하는지 — 게임이 얼마나 시작되고 끝나는지, 카드를 얼마나 자주 스킵하는지 — 알기 위해 정해진 짧은 이벤트 목록만 미국에 호스팅된 PostHog로 보내요. 쿠키도, 세션 녹화도, 자동 수집도 없어요. 아래 이벤트와 아래 항목만이에요. 같은 기기의 이벤트를 묶기 위해 이 브라우저 저장소에 무작위 익명 ID 하나를 두는데, 로컬 데이터를 지우거나 사용 통계를 끄면 함께 삭제돼요.",
+  "privacy.analytics.collected.title": "보내는 것",
+  "privacy.analytics.collected.1": "지금 어떤 화면에 있는지",
+  "privacy.analytics.collected.2":
+    "게임이 시작됐는지(단계)와 끝났는지(대략의 길이와 카드 수)",
+  "privacy.analytics.collected.3":
+    "카드를 보여줬는지, 스킵했는지, 패스했는지 — 구간, 종류, 뽑힌 이유만",
+  "privacy.analytics.collected.4":
+    "뱀·다시 섞기/올라가기·설치·설정에서의 선택, 템플릿을 저장했다는 사실, 오류가 났다는 사실(오류 종류만, 내용은 절대)",
+  "privacy.analytics.collected.5": "기기 종류(폰, 태블릿, 데스크톱)와 앱 언어",
+  "privacy.analytics.never.title": "절대 보내지 않는 것",
+  "privacy.analytics.never.1": "카드 내용, 어떤 카드를 뽑았는지",
+  "privacy.analytics.never.2":
+    "플레이어 이름, 답변, 템플릿 이름, 직접 입력한 모든 것",
+  "privacy.analytics.never.3":
+    "세션 녹화, 자동 수집된 터치, 쿠키, 위치(IP 조회를 꺼 두었어요)",
+  "privacy.analytics.optout.before": "언제든 ",
+  "privacy.analytics.optout.link": "설정 → 사용 통계",
+  "privacy.analytics.optout.after": "에서 끌 수 있어요.",
   "privacy.outro.before":
     "진행 중인 게임, 요약, 환경설정은 이 브라우저의 로컬 저장소에만 보관돼요. ",
   "privacy.outro.link": "설정 → 로컬 데이터 모두 지우기",
   "privacy.outro.after":
-    "에서 전부 지울 수 있어요. 플레이에 계정은 필요 없고, 광고도 서드파티 트래커도 없어요.",
+    "에서 전부 지울 수 있어요. 플레이에 계정은 필요 없고, 광고도 없으며, 위의 익명 사용 통계 외에는 아무것도 추적하지 않아요.",
 
   "dice.roll": "주사위 굴리기",
 };

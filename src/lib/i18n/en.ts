@@ -38,7 +38,7 @@ export const en = {
 
   // — session setup —
   "setup.title": "Set the mood",
-  "setup.resume": "Resume your game ▶",
+  "setup.resume": "Resume your session ▶",
   "setup.resume.turn": "turn {turn}",
   "setup.players": "Players",
   "setup.players.note": "Names stay on this phone — never uploaded.",
@@ -59,15 +59,15 @@ export const en = {
   "skips.unlimited": "Unlimited",
 
   // — play —
-  "play.loading": "Loading your game…",
+  "play.loading": "Loading your session…",
   "play.turn": "{name}'s turn",
   "play.tile": "tile {tile}",
   "play.tile.start": "start",
-  "play.end": "End game",
-  "play.end.confirm": "End this game? Nothing is saved from a session.",
+  "play.end": "End session",
+  "play.end.confirm": "End this session? Nothing is saved from a session.",
   "play.deck.loading": "Loading your deck…",
   "play.deck.unavailable":
-    "This deck isn't available right now — check your connection, or end the game and pick another deck.",
+    "This deck isn't available right now — check your connection, or end the session and pick another deck.",
 
   // — prompt card —
   "card.reason.tile": "Your card",
@@ -102,7 +102,7 @@ export const en = {
   "exhaust.back": "Back",
 
   // — recap —
-  "recap.empty": "No finished games yet.",
+  "recap.empty": "No finished sessions yet.",
   "recap.empty.cta": "Start one",
   "recap.headline": "First to the finish: {name}!",
   "recap.subtitle": "A {tier} journey, finished together.",
@@ -150,7 +150,7 @@ export const en = {
     "Your browser will offer installation once eligible.",
   "settings.data": "Your data",
   "settings.data.body":
-    "Games in progress, recaps, preferences and cached decks live only on this device.",
+    "Sessions in progress, recaps, preferences and cached decks live only on this device.",
   "settings.data.privacyLink": "Read how privacy works",
   "settings.data.clear": "Clear all local data",
   "settings.data.cleared": "Cleared ✓",
@@ -203,7 +203,7 @@ export const en = {
   "builder.pin.ladderFoot":
     "That's a ladder foot — the climb would skip this card.",
   "builder.pin.finish":
-    "The finish tile ends the game — no card can fire there.",
+    "The finish tile ends the session — no card can fire there.",
   "builder.play": "Play now",
   "builder.blocked": "Move the flagged cards to open tiles first.",
   "builder.save": "Save to My Templates",
@@ -222,16 +222,16 @@ export const en = {
   "privacy.know.title": "Our servers know",
   "privacy.know.1": "Who you are — only if you create an account",
   "privacy.know.2":
-    "Game setups you chose to save (board, tier, your Pinned Prompt text)",
+    "Template setups you chose to save (board, tier, your Pinned Prompt text)",
   "privacy.know.3": "What you bought, once premium decks exist",
   "privacy.never.title": "Our servers never know",
-  "privacy.never.1": "Anything that happened during a game",
+  "privacy.never.1": "Anything that happened during a session",
   "privacy.never.2": "Which cards you drew, answered, or skipped",
   "privacy.never.3": "Player names — they never leave the device",
   "privacy.never.4":
     "Any answer, note, or photo — we have no way to receive them",
   "privacy.outro.before":
-    "Live games, recaps, and preferences are stored only in this browser's local storage. You can wipe everything in ",
+    "Live sessions, recaps, and preferences are stored only in this browser's local storage. You can wipe everything in ",
   "privacy.outro.link": "Settings → Clear local data",
   "privacy.outro.after":
     ". No accounts are required to play, and there are no ads and no third-party trackers.",

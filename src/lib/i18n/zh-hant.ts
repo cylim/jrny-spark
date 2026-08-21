@@ -43,9 +43,6 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
     "還沒有{tier}牌組——執行 `bun run seed` 載入入門牌組。",
   "setup.deck.noneSample": "還沒有{tier}牌組——將使用內建的範例牌組。",
   "setup.skips": "每人可跳過次數",
-  "setup.skips.note":
-    "「跳過」會換一張新卡。直接把卡收起來（略過）永遠不限次數。",
-  "setup.skips.unlimited": "無限",
   "setup.start": "啟程出發",
 
   // — shared skip-budget picker (context-neutral; used in setup and builder) —

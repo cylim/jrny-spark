@@ -46,9 +46,6 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "setup.deck.noneSample":
     "아직 {tier} 덱이 없어요 — 내장된 샘플 덱으로 진행돼요.",
   "setup.skips": "1인당 스킵 횟수",
-  "setup.skips.note":
-    "스킵은 카드를 새 카드로 바꿔요. 카드를 그냥 덮어두는 패스는 언제나 무제한이에요.",
-  "setup.skips.unlimited": "무제한",
   "setup.start": "여정을 시작해요",
 
   // — shared skip-budget picker (context-neutral; used in setup and builder) —

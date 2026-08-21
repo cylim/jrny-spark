@@ -51,9 +51,6 @@ export const en = {
   "setup.deck.noneSample":
     "No {tier} deck yet — the built-in Sample Deck will be used.",
   "setup.skips": "Skips per player",
-  "setup.skips.note":
-    "A Skip trades a card for a fresh one. Putting a card away without drawing a replacement (Pass) is always free.",
-  "setup.skips.unlimited": "Unlimited",
   "setup.start": "Start the journey",
 
   // — shared skip-budget picker (context-neutral; used in setup and builder) —

@@ -7,14 +7,18 @@
 // works for any pairing, comfortable to read aloud. Zones escalate WITHIN
 // the tier: 1 = warm-up, 2 = deeper, 3 = the tier's full intensity.
 
+import { type Infer } from "convex/values";
+import { displayTextValidator } from "./schema";
+
 type Zone = 1 | 2 | 3;
 type Kind = "question" | "action" | "together";
 
 // Authoring stays plain English strings; add translations per card as the
 // per-language passes land (separate authoring work — PRD §6.10). The seed
 // normalizes both forms into the localized DB shape ({ en, ko?, "zh-Hant"? }).
-export type StarterText =
-  string | { en: string; ko?: string; "zh-Hant"?: string };
+// Derived from displayTextValidator in schema.ts — adding a locale there
+// automatically widens this type without a second edit.
+export type StarterText = Infer<typeof displayTextValidator>;
 
 export interface StarterPrompt {
   zone: Zone;

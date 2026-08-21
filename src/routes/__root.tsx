@@ -1,17 +1,27 @@
 import type { ReactNode } from "react";
-import { createRootRoute, HeadContent, Link, Outlet, Scripts } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  HeadContent,
+  Link,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 import { Show, UserButton } from "@clerk/tanstack-react-start";
 import appCss from "../styles/app.css?url";
 import { Providers } from "~/components/Providers";
 import { RegisterSW } from "~/components/RegisterSW";
 import { SetupBanner } from "~/components/SetupBanner";
+import { useI18n } from "~/lib/i18n";
 import { hasClerk } from "~/env";
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
+      },
       { title: "Spark — Play your way closer." },
       {
         name: "description",
@@ -22,7 +32,10 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#14101f" },
       // iOS ignores most of the manifest — these are the Safari fallbacks
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      {
+        name: "apple-mobile-web-app-status-bar-style",
+        content: "black-translucent",
+      },
       { name: "apple-mobile-web-app-title", content: "Spark" },
     ],
     links: [
@@ -34,7 +47,7 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
-})
+});
 
 function RootComponent() {
   return (
@@ -50,6 +63,7 @@ function RootComponent() {
 }
 
 function Header() {
+  const { t } = useI18n();
   return (
     <header className="flex items-center justify-between px-5 py-4">
       <Link to="/" className="font-display text-xl tracking-wide text-blush">
@@ -57,13 +71,13 @@ function Header() {
       </Link>
       <nav className="flex items-center gap-4 text-sm text-mist">
         <Link to="/play/setup" className="hover:text-blush">
-          Play
+          {t("nav.play")}
         </Link>
         <Link to="/templates" className="hover:text-blush">
-          My Templates
+          {t("nav.templates")}
         </Link>
         <Link to="/settings" className="hover:text-blush">
-          Settings
+          {t("nav.settings")}
         </Link>
         {hasClerk && (
           <Show when="signed-in">

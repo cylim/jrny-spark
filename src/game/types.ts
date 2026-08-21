@@ -20,9 +20,18 @@ export interface BoardPreset {
   neutralTiles: number[];
 }
 
+/**
+ * A per-player Skip allowance (§4.6): a whole number of budgeted redraws,
+ * or null for unlimited. The null contract travels with this name — the
+ * Convex schema (`gameTemplates.skipsPerPlayer`) follows the same shape.
+ */
+export type SkipBudget = number | null;
+
 export interface PlayerState {
   name: string;
   position: number; // 0 = off-board start
+  /** Budgeted redraws left this session; null = unlimited (§4.6). */
+  skipsRemaining: SkipBudget;
 }
 
 export interface SessionConfig {
@@ -32,6 +41,8 @@ export interface SessionConfig {
   boardPresetId: string;
   /** Fixed prompts on specific tiles from a Game Template; trump deck draws. */
   tilePrompts?: Record<number, Prompt>;
+  /** Per-player skip budget; absent = the default (3). */
+  skipsPerPlayer?: SkipBudget;
 }
 
 export interface SessionStats {
@@ -40,6 +51,7 @@ export interface SessionStats {
   laddersClimbed: number;
   snakesSlid: number;
   snakesCharmed: number;
+  skipsUsed: number;
   startedAt: number;
 }
 
@@ -47,6 +59,7 @@ export type Phase =
   | "awaitRoll" // current player may roll
   | "prompt" // a card is on screen, waiting for CARD_DONE
   | "snakeChoice" // landed on a snake head: accept slide or charm
+  | "exhaustionChoice" // the active zone ran dry: stay (reshuffle) or advance
   | "finished";
 
 /**
@@ -57,6 +70,11 @@ export type Phase =
 export interface ActiveCard {
   prompt: Prompt;
   reason: "tile" | "ladder" | "charm";
+  /**
+   * The draw request this card answered — kept so a Skip can redraw with the
+   * exact same zone/reason/kind. Absent on sessions saved before Skip existed.
+   */
+  drawRequest?: PendingDraw;
 }
 
 /**
@@ -81,6 +99,11 @@ export interface GameState {
   pendingDraw: PendingDraw | null;
   /** Pending snake slide while the player decides (head/tail tiles). */
   pendingSnake: { from: number; to: number } | null;
+  /**
+   * Set while phase is "exhaustionChoice": the zone that ran dry. The
+   * unresolved pendingDraw is kept alongside so Stay/Advance can complete it.
+   */
+  pendingExhaustion: { zone: Zone } | null;
   /** Prompt ids already drawn this session, per zone (no repeats until a zone is exhausted). */
   usedPromptIds: Record<Zone, string[]>;
   stats: SessionStats;
@@ -96,6 +119,10 @@ export interface GameState {
 export type GameEvent =
   | { type: "ROLLED"; value: number }
   | { type: "CARD_DRAWN"; prompt: Prompt; reason: ActiveCard["reason"] }
-  | { type: "CARD_DONE" }
+  | { type: "CARD_DONE" } // complete OR pass — deliberately the same event (§4.6)
+  | { type: "CARD_SKIP" } // budgeted redraw of the active card
   | { type: "SNAKE_ACCEPT" }
-  | { type: "SNAKE_CHARM" }; // sets pendingDraw (reason "charm")
+  | { type: "SNAKE_CHARM" } // sets pendingDraw (reason "charm")
+  | { type: "ZONE_EXHAUSTED" } // the pending draw's zone ran dry (caller-detected)
+  | { type: "EXHAUSTION_STAY" } // true reshuffle of the dry zone
+  | { type: "EXHAUSTION_ADVANCE"; tier: Tier; deckSlug: string }; // next tier's deck

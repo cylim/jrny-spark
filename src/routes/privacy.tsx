@@ -42,7 +42,7 @@ function Privacy() {
       </div>
 
       {/* The analytics disclosure (§6.9): provider, what is and isn't
-          collected — mirrors src/lib/analytics/events.ts. */}
+          collected — mirrors src/lib/analytics.ts. */}
       <section className="mt-6 rounded-2xl bg-plum p-4">
         <h2 className="text-sm font-semibold text-blush">
           {t("privacy.analytics.title")}

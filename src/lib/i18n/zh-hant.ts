@@ -216,7 +216,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "privacy.analytics.collected.3":
     "一張卡被顯示、跳過或略過——只有區段、類型,以及為什麼抽到它",
   "privacy.analytics.collected.4":
-    "蛇、重新洗牌/升級、安裝與設定的選擇;儲存了模板;發生了錯誤(只有錯誤類型,絕不含內容)",
+    "蛇(馴服或滑落)、留下/升級、安裝與設定的選擇;儲存了模板;發生了錯誤(只有錯誤類型,絕不含內容)",
   "privacy.analytics.collected.5": "裝置類型(手機、平板或桌機)與應用程式語言",
   "privacy.analytics.never.title": "絕不會傳送的",
   "privacy.analytics.never.1": "卡片文字,或你抽到哪一張卡",

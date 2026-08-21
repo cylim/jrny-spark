@@ -229,7 +229,7 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "privacy.analytics.collected.3":
     "카드를 보여줬는지, 스킵했는지, 패스했는지 — 구간, 종류, 뽑힌 이유만",
   "privacy.analytics.collected.4":
-    "뱀·다시 섞기/올라가기·설치·설정에서의 선택, 템플릿을 저장했다는 사실, 오류가 났다는 사실(오류 종류만, 내용은 절대)",
+    "뱀(홀리기/미끄러지기)·유지/올라가기·설치·설정에서의 선택, 템플릿을 저장했다는 사실, 오류가 났다는 사실(오류 종류만, 내용은 절대)",
   "privacy.analytics.collected.5": "기기 종류(폰, 태블릿, 데스크톱)와 앱 언어",
   "privacy.analytics.never.title": "절대 보내지 않는 것",
   "privacy.analytics.never.1": "카드 내용, 어떤 카드를 뽑았는지",

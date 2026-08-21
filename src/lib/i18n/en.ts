@@ -246,7 +246,7 @@ export const en = {
   "privacy.analytics.collected.3":
     "That a card was shown, skipped, or passed — only its zone, kind, and why it was drawn",
   "privacy.analytics.collected.4":
-    "Snake, reshuffle / move-up, install, and settings choices; that a Template was saved; that something broke (the kind of error, never its contents)",
+    "Your snake (charm or slide), Stay / Advance, install, and settings choices; that a Template was saved; that something broke (the kind of error, never its contents)",
   "privacy.analytics.collected.5":
     "Device class (phone, tablet, or desktop) and app language",
   "privacy.analytics.never.title": "What is never sent",

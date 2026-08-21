@@ -4,7 +4,7 @@ import {
   deviceClass,
   durationBucket,
   enforceAllowList,
-} from "./events";
+} from "./analytics";
 
 const MINUTE = 60_000;
 

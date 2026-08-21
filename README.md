@@ -71,7 +71,7 @@ first-ever visit that happens offline.)
 - `convex/_generated/` **is committed** — TypeScript fails without it. If
   it's stale, run `bunx convex codegen` (or let `dev:convex` regenerate).
 - **Analytics are content-free by construction** (PRD §6.9, ADR 0001).
-  `src/lib/analytics/events.ts` is the single reviewed allow-list: a typed
+  `src/lib/analytics.ts` is the single reviewed allow-list: a typed
   event union (closed values, bucketed numbers) plus a runtime property table
   installed as PostHog's `before_send`, so anything not on the list — PostHog's
   own internal events included — is dropped before it leaves the device.

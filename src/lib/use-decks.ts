@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import type { Prompt, Tier } from "~/game/types";
+import type { Prompt } from "~/game/types";
 import {
   SAMPLE_DECK_SLUG,
   sampleDeckMeta,

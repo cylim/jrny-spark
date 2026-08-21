@@ -52,7 +52,7 @@ export const en = {
     "No {tier} deck yet — the built-in Sample Deck will be used.",
   "setup.skips": "Skips per player",
   "setup.skips.note":
-    "A Skip trades a card for a fresh one. Putting a card away without a redraw (Pass) is always free.",
+    "A Skip trades a card for a fresh one. Putting a card away without drawing a replacement (Pass) is always free.",
   "setup.skips.unlimited": "Unlimited",
   "setup.start": "Start the journey",
 
@@ -159,7 +159,7 @@ export const en = {
   "templates.title": "My Templates",
   "templates.new": "+ New",
   "templates.blurb":
-    "Templates hold setups only — boards, decks and your pinned cards. Never what happened while playing.",
+    "Templates hold setups only — boards, decks and your pinned prompts. Never what happened while playing.",
   "templates.unconfigured.before":
     "Cloud saves need Clerk + Convex configured. You can still build and play Templates from ",
   "templates.unconfigured.link": "New Template",
@@ -170,7 +170,7 @@ export const en = {
   "templates.empty.before": "Nothing saved yet — build one with ",
   "templates.empty.new": "+ New",
   "templates.empty.after": ".",
-  "templates.meta.pins": "{count} pinned cards",
+  "templates.meta.pins": "{count} pinned prompts",
   "templates.meta.skips": "{count} skips",
   "templates.meta.skips.unlimited": "unlimited skips",
   "templates.play": "Play",
@@ -180,14 +180,14 @@ export const en = {
   // — template builder —
   "builder.title": "Build a Template",
   "builder.blurb":
-    "Pin your own cards to specific tiles — inside jokes, real plans, your own dares. They override deck draws on those tiles.",
+    "Pin your own prompts to specific tiles — inside jokes, real plans, your own dares. They override deck draws on those tiles.",
   "builder.name": "Name",
   "builder.name.placeholder": "Anniversary special",
   "builder.tier": "Tier",
   "builder.deck": "Deck",
   "builder.deck.sample": "Sample Deck",
   "builder.skips": "Skips per player",
-  "builder.pins": "Pinned cards",
+  "builder.pins": "Pinned Prompts",
   "builder.pins.add": "+ Add card",
   "builder.pins.tile": "Tile",
   "builder.pins.kind.question": "Question",

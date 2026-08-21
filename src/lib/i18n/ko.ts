@@ -227,7 +227,7 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "privacy.analytics.collected.2":
     "게임이 시작됐는지(단계)와 끝났는지(대략의 길이와 카드 수)",
   "privacy.analytics.collected.3":
-    "카드를 보여줬는지, 스킵했는지, 패스했는지 — 구간, 종류, 뽑힌 이유만",
+    "카드를 보여줬는지(구간, 종류, 뽑힌 이유만), 스킵했는지, 패스했는지",
   "privacy.analytics.collected.4":
     "뱀(홀리기/미끄러지기)·유지/올라가기·설치·설정에서의 선택, 템플릿을 저장했다는 사실, 오류가 났다는 사실(오류 종류만, 내용은 절대)",
   "privacy.analytics.collected.5": "기기 종류(폰, 태블릿, 데스크톱)와 앱 언어",

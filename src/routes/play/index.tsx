@@ -78,20 +78,26 @@ function Play() {
         cards_drawn_bucket: cardsDrawnBucket(finished.stats.cardsDrawn),
       });
       void (async () => {
-        await appendHistory({
-          finishedAt,
-          winnerName: finished.players[finished.winner!].name,
-          tier: finished.config.tier,
-          stats: finished.stats,
-          // null (unlimited) must survive — `??` would rewrite it to the
-          // default and make the recap show a skips line it shouldn't.
-          skipsPerPlayer:
-            finished.config.skipsPerPlayer === undefined
-              ? DEFAULT_SKIP_BUDGET
-              : finished.config.skipsPerPlayer,
-        });
-        await clearSession();
-        navigate({ to: "/play/recap" });
+        try {
+          await appendHistory({
+            finishedAt,
+            winnerName: finished.players[finished.winner!].name,
+            tier: finished.config.tier,
+            stats: finished.stats,
+            // null (unlimited) must survive — `??` would rewrite it to the
+            // default and make the recap show a skips line it shouldn't.
+            skipsPerPlayer:
+              finished.config.skipsPerPlayer === undefined
+                ? DEFAULT_SKIP_BUDGET
+                : finished.config.skipsPerPlayer,
+          });
+        } finally {
+          // Always clear: a finished session left behind would re-run this
+          // effect on the next mount — re-appending the recap and counting
+          // session_completed twice.
+          await clearSession();
+          navigate({ to: "/play/recap" });
+        }
       })();
     }
   }, [state, navigate]);

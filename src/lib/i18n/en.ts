@@ -244,7 +244,7 @@ export const en = {
   "privacy.analytics.collected.2":
     "That a session started (its tier) or finished (rounded length and card count)",
   "privacy.analytics.collected.3":
-    "That a card was shown, skipped, or passed — only its zone, kind, and why it was drawn",
+    "That a card was shown (only its zone, kind, and why it was drawn), skipped, or passed",
   "privacy.analytics.collected.4":
     "Your snake (charm or slide), Stay / Advance, install, and settings choices; that a Template was saved; that something broke (the kind of error, never its contents)",
   "privacy.analytics.collected.5":

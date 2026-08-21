@@ -292,20 +292,34 @@ function flush(): void {
   for (const event of pending) send(state.client, event);
 }
 
+/**
+ * Delete what PostHog stored (the anonymous id), stop it writing anything
+ * further, and forget the id in memory too — so nothing of PostHog's remains
+ * in this browser after opting out.
+ */
+function forgetStoredIdentity(posthog: PostHogClient): void {
+  posthog.set_config({ disable_persistence: true });
+  posthog.reset();
+}
+
 function applyChoice(on: boolean): void {
   state.ready = true;
   state.enabled = on;
   if (!on) {
     state.queue = [];
-    // Delete what PostHog stored (the anonymous id), stop it writing
-    // anything further, and forget the id in memory too — so nothing of
-    // PostHog's remains in this browser after opting out.
-    state.client?.set_config({ disable_persistence: true });
-    state.client?.reset();
+    // If PostHog is still downloading, the .then() below cleans up instead:
+    // init() writes the id before anyone can stop it, and the toggle must
+    // still leave nothing behind.
+    if (state.client) forgetStoredIdentity(state.client);
     return;
   }
   void ensureClient().then(() => {
-    if (!state.enabled || !state.client) return; // toggled off while loading
+    if (!state.client) return;
+    if (!state.enabled) {
+      // Toggled off while loading — honor it now that the client exists.
+      forgetStoredIdentity(state.client);
+      return;
+    }
     state.client.set_config({ disable_persistence: false });
     flush();
   });

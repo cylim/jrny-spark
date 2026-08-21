@@ -9,16 +9,14 @@ import {
 } from "~/game/sample-deck";
 import { hasConvex } from "~/env";
 import { useI18n } from "~/lib/i18n";
-import { cacheDeck, cacheDeckList, getCachedDeck } from "./storage";
+import {
+  cacheDeck,
+  cacheDeckList,
+  getCachedDeck,
+  type CachedDeckMeta as DeckMeta,
+} from "./storage";
 
-export interface DeckMeta {
-  slug: string;
-  title: string;
-  description: string;
-  tier: Tier;
-  isPremium: boolean;
-  promptCount: number;
-}
+export type { DeckMeta };
 
 /** Server decks (when Convex is configured) plus the built-in Sample Deck. */
 export function useDeckList(): DeckMeta[] {

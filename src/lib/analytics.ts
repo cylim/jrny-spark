@@ -342,13 +342,15 @@ async function syncFromPrefs(): Promise<void> {
  * no-op on the server, without a PostHog key, or while usage stats are off.
  */
 export function track(event: AnalyticsEvent): void {
-  if (!state.available) return;
+  if (state.initialized && !state.available) return;
   if (state.ready && !state.enabled) return;
   if (state.client && state.enabled) {
     send(state.client, event);
     return;
   }
-  // Preference unknown, or PostHog still loading: hold, bounded.
+  // Not booted yet, preference unknown, or PostHog still loading: hold,
+  // bounded — a route effect that runs before <Analytics /> mounts must
+  // not lose its event.
   if (state.queue.length < MAX_QUEUE) state.queue.push(event);
 }
 
@@ -356,7 +358,10 @@ export function track(event: AnalyticsEvent): void {
 export function initAnalytics(): void {
   if (state.initialized) return;
   state.initialized = true;
-  if (typeof window === "undefined" || !hasPostHog) return;
+  if (typeof window === "undefined" || !hasPostHog) {
+    state.queue = [];
+    return;
+  }
   state.available = true;
   void syncFromPrefs();
   // Crash signal only — the kind, never a message or stack (those may

@@ -55,9 +55,11 @@ function RootComponent() {
     <RootDocument>
       <Providers>
         <Header />
+        {/* Before <Outlet /> so its effects (boot, page_view) run ahead of
+            the route tree's — effects fire in tree order. */}
+        <Analytics />
         <Outlet />
         <RegisterSW />
-        <Analytics />
         <SetupBanner />
       </Providers>
     </RootDocument>

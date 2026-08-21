@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Show, SignInButton, UserButton } from "@clerk/tanstack-react-start";
 import { hasClerk } from "~/env";
@@ -22,8 +22,10 @@ function Settings() {
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [installable, setInstallable] = useState(false);
   const [cleared, setCleared] = useState(false);
-  // Usage stats default to on; the opt-out is a local pref (§6.9).
+  // Usage stats default to on; the opt-out is a local pref (§6.9). Once the
+  // user has tapped the switch, a late prefs read must not overwrite it.
   const [usageStats, setUsageStats] = useState(true);
+  const usageStatsTouched = useRef(false);
   // Platform detection only after mount — calling isStandalone()/isIos()
   // during render would make server HTML and client hydration disagree.
   const [platform, setPlatform] = useState({ standalone: false, ios: false });
@@ -31,7 +33,7 @@ function Settings() {
   useEffect(() => {
     loadPrefs().then((p) => {
       setAgeConfirmed(Boolean(p.ageConfirmed));
-      setUsageStats(!p.analyticsOptOut);
+      if (!usageStatsTouched.current) setUsageStats(!p.analyticsOptOut);
     });
     setInstallable(canPromptInstall());
     setPlatform({ standalone: isStandalone(), ios: isIos() });
@@ -39,6 +41,7 @@ function Settings() {
   }, []);
 
   const toggleUsageStats = () => {
+    usageStatsTouched.current = true;
     const next = !usageStats;
     setUsageStats(next);
     void setAnalyticsEnabled(next);
@@ -147,6 +150,9 @@ function Settings() {
             type="button"
             onClick={() =>
               void promptInstall().then((outcome) => {
+                // The prompt event is spent either way; the browser will
+                // re-offer via beforeinstallprompt if still eligible.
+                setInstallable(false);
                 if (outcome) track({ name: "install_prompt", outcome });
               })
             }

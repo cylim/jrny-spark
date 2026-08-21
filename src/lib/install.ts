@@ -28,12 +28,17 @@ export function onInstallAvailable(fn: () => void): () => void {
 
 export type InstallOutcome = "accepted" | "dismissed";
 
-/** Show the native install prompt; null when none is available. */
+/**
+ * Show the native install prompt; null when none is available. The event is
+ * single-use whichever way it goes — if still eligible, the browser fires a
+ * fresh `beforeinstallprompt` later (see onInstallAvailable).
+ */
 export async function promptInstall(): Promise<InstallOutcome | null> {
-  if (!deferredPrompt) return null;
-  await deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === "accepted") deferredPrompt = null;
+  const event = deferredPrompt;
+  if (!event) return null;
+  deferredPrompt = null;
+  await event.prompt();
+  const { outcome } = await event.userChoice;
   return outcome;
 }
 

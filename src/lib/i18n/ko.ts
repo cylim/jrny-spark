@@ -241,7 +241,7 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "privacy.analytics.optout.link": "설정 → 사용 통계",
   "privacy.analytics.optout.after": "에서 끌 수 있어요.",
   "privacy.outro.before":
-    "진행 중인 게임, 요약, 환경설정은 이 브라우저의 로컬 저장소에만 보관돼요. ",
+    "진행 중인 게임, 요약, 환경설정은 이 기기의 브라우저 안에만 보관돼요. ",
   "privacy.outro.link": "설정 → 로컬 데이터 모두 지우기",
   "privacy.outro.after":
     "에서 전부 지울 수 있어요. 플레이에 계정은 필요 없고, 광고도 없으며, 위의 익명 사용 통계 외에는 아무것도 추적하지 않아요.",

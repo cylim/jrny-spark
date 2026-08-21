@@ -94,9 +94,13 @@ function Play() {
         } finally {
           // Always clear: a finished session left behind would re-run this
           // effect on the next mount — re-appending the recap and counting
-          // session_completed twice.
-          await clearSession();
-          navigate({ to: "/play/recap" });
+          // session_completed twice. And always move on to the recap, even
+          // if the clear itself fails.
+          try {
+            await clearSession();
+          } finally {
+            navigate({ to: "/play/recap" });
+          }
         }
       })();
     }

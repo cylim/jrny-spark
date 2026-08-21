@@ -259,7 +259,7 @@ export const en = {
   "privacy.analytics.optout.link": "Settings → Usage stats",
   "privacy.analytics.optout.after": ".",
   "privacy.outro.before":
-    "Live sessions, recaps, and preferences are stored only in this browser's local storage. You can wipe everything in ",
+    "Live sessions, recaps, and preferences are stored only in this browser, on this device. You can wipe everything in ",
   "privacy.outro.link": "Settings → Clear local data",
   "privacy.outro.after":
     ". No accounts are required to play, there are no ads, and nothing is tracked beyond the anonymous usage stats above.",

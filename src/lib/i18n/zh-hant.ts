@@ -227,7 +227,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "privacy.analytics.optout.link": "設定 → 使用統計",
   "privacy.analytics.optout.after": "關閉。",
   "privacy.outro.before":
-    "進行中的遊戲、回顧與偏好設定,只存在這個瀏覽器的本機儲存空間。你可以在",
+    "進行中的遊戲、回顧與偏好設定,只存在這台裝置的這個瀏覽器裡。你可以在",
   "privacy.outro.link": "設定 → 清除所有本機資料",
   "privacy.outro.after":
     "一次清空。遊玩不需要帳號,也沒有廣告;除了上述匿名使用統計之外,不追蹤任何事。",

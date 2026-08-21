@@ -221,11 +221,11 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "privacy.never.4": "답변, 메모, 사진 — 애초에 받을 방법 자체가 없어요",
   "privacy.analytics.title": "익명 사용 통계 (PostHog, 미국)",
   "privacy.analytics.body":
-    "Spark가 잘 작동하는지 — 게임이 얼마나 시작되고 끝나는지, 카드를 얼마나 자주 스킵하는지 — 알기 위해 정해진 짧은 이벤트 목록만 미국에 호스팅된 PostHog로 보내요. 쿠키도, 세션 녹화도, 자동 수집도 없어요. 아래 이벤트와 아래 항목만이에요. 같은 기기의 이벤트를 묶기 위해 이 브라우저 저장소에 무작위 익명 ID 하나를 두는데, 로컬 데이터를 지우거나 사용 통계를 끄면 함께 삭제돼요.",
+    "Spark가 잘 작동하는지 — 게임이 얼마나 시작되고 끝나는지, 카드를 얼마나 자주 스킵하는지 — 알기 위해 정해진 짧은 이벤트 목록만 미국에 호스팅된 PostHog로 보내요. 쿠키도, 세션 녹화도, 자동 수집도 없어요. 아래 이벤트와 아래 항목만이에요. 같은 기기의 이벤트를 묶기 위해 이 브라우저 저장소에 무작위 익명 ID 하나를 두는데, 로컬 데이터를 지우면 새것으로 바뀌고 사용 통계를 끄면 삭제돼요.",
   "privacy.analytics.collected.title": "보내는 것",
   "privacy.analytics.collected.1": "지금 어떤 화면에 있는지",
   "privacy.analytics.collected.2":
-    "게임이 시작됐는지(단계)와 끝났는지(대략의 길이와 카드 수)",
+    "게임이 시작됐는지(단계와 게임 종류)와 끝났는지(대략의 길이와 카드 수)",
   "privacy.analytics.collected.3":
     "카드를 보여줬는지(구간, 종류, 뽑힌 이유만), 스킵했는지, 패스했는지",
   "privacy.analytics.collected.4":

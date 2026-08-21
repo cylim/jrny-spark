@@ -208,11 +208,11 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "privacy.never.4": "任何回答、筆記或照片——我們根本沒有接收的管道",
   "privacy.analytics.title": "匿名使用統計(PostHog,美國)",
   "privacy.analytics.body":
-    "為了知道 Spark 是否好用——有多少場遊戲開始、多少場完成、卡片多常被跳過——我們會把一份固定的簡短事件清單傳送到位於美國的 PostHog。沒有 cookie、沒有錄影回放、沒有自動擷取:只有下面這些事件,也只有下面這些欄位。瀏覽器儲存空間裡會保留一個隨機的匿名 ID,用來把同一台裝置的事件連在一起;清除本機資料或關閉使用統計時就會一併刪除。",
+    "為了知道 Spark 是否好用——有多少場遊戲開始、多少場完成、卡片多常被跳過——我們會把一份固定的簡短事件清單傳送到位於美國的 PostHog。沒有 cookie、沒有錄影回放、沒有自動擷取:只有下面這些事件,也只有下面這些欄位。瀏覽器儲存空間裡會保留一個隨機的匿名 ID,用來把同一台裝置的事件連在一起;清除本機資料時會換成新的一個,關閉使用統計時則會刪除。",
   "privacy.analytics.collected.title": "會傳送的",
   "privacy.analytics.collected.1": "你目前在哪個畫面",
   "privacy.analytics.collected.2":
-    "一場遊戲開始了(強度)或結束了(概略時長與卡片數)",
+    "一場遊戲開始了(強度與遊戲類型)或結束了(概略時長與卡片數)",
   "privacy.analytics.collected.3":
     "一張卡被顯示(只有區段、類型,以及為什麼抽到它)、跳過或略過",
   "privacy.analytics.collected.4":

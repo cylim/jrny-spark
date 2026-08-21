@@ -238,11 +238,11 @@ export const en = {
     "Any answer, note, or photo — we have no way to receive them",
   "privacy.analytics.title": "Anonymous usage stats (PostHog, US)",
   "privacy.analytics.body":
-    "To see whether Spark works — how many sessions start and finish, how often cards get skipped — we send a short, fixed list of events to PostHog, hosted in the US. No cookies, no session replay, no autocapture: only the events below, with only the fields below. A random anonymous ID in this browser's storage ties events from the same device together; it is removed when you clear local data or switch usage stats off.",
+    "To see whether Spark works — how many sessions start and finish, how often cards get skipped — we send a short, fixed list of events to PostHog, hosted in the US. No cookies, no session replay, no autocapture: only the events below, with only the fields below. A random anonymous ID in this browser's storage ties events from the same device together; it is reset when you clear local data and removed when you switch usage stats off.",
   "privacy.analytics.collected.title": "What is sent",
   "privacy.analytics.collected.1": "Which screen you're on",
   "privacy.analytics.collected.2":
-    "That a session started (its tier) or finished (rounded length and card count)",
+    "That a session started (its tier and game type) or finished (rounded length and card count)",
   "privacy.analytics.collected.3":
     "That a card was shown (only its zone, kind, and why it was drawn), skipped, or passed",
   "privacy.analytics.collected.4":

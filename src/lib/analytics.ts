@@ -242,8 +242,9 @@ function ensureClient(): Promise<void> {
       ui_host: "https://us.posthog.com",
       defaults: "2026-01-30",
       // Cookieless: the only thing kept in the browser is a random anonymous
-      // id in localStorage (so §1.5 return-play is countable). Opt-out and
-      // Clear local data remove it (see applyChoice / resetAnalytics).
+      // id in localStorage (so §1.5 return-play is countable). Opt-out
+      // removes it; Clear local data replaces it with a fresh one (see
+      // applyChoice / resetAnalytics).
       persistence: "localStorage",
       person_profiles: "never",
       // Nothing automatic ever fires — only track() with allow-listed events.

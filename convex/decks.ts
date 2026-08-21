@@ -18,7 +18,8 @@ export function localize(text: DisplayText, locale?: Locale): string {
 // Read bounds. The catalog is curated (a handful of starter decks; PRD
 // tops out at tens), and the prompt cap is far above the authoring bar
 // (~30 cards/deck) — the game needs a deck's ENTIRE pool, so the cap is a
-// safety bound, not pagination. Keep seeded content under it.
+// safety bound, not pagination. seed.ts refuses content above it, so the
+// bound can never silently truncate a pool.
 const MAX_DECKS = 100;
 export const MAX_PROMPTS_PER_DECK = 1000;
 

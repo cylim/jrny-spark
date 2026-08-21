@@ -74,7 +74,7 @@ export interface ActiveCard {
    * The draw request this card answered — kept so a Skip can redraw with the
    * exact same zone/reason/kind. Absent on sessions saved before Skip existed.
    */
-  from?: PendingDraw;
+  drawRequest?: PendingDraw;
 }
 
 /**

@@ -106,7 +106,7 @@ export function applyEvent(
       const card: ActiveCard = {
         prompt: event.prompt,
         reason: event.reason,
-        from: state.pendingDraw,
+        drawRequest: state.pendingDraw,
       };
       return {
         ...state,
@@ -147,13 +147,13 @@ export function applyEvent(
         return state;
       const remaining = state.players[state.current].skipsRemaining;
       if (remaining !== null && remaining <= 0) return state;
-      const { prompt, reason, from } = state.activeCard;
+      const { prompt, reason, drawRequest } = state.activeCard;
       return {
         ...state,
         activeCard: null,
         // Redraw with the exact request the skipped card answered — same
         // zone, same reason, same preferred kind (a charm skip stays a dare).
-        pendingDraw: from ?? {
+        pendingDraw: drawRequest ?? {
           zone: prompt.zone,
           reason,
           preferKind: reason === "charm" ? "action" : undefined,

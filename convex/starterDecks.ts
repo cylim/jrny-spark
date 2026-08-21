@@ -1,7 +1,7 @@
 // Starter deck content — seeded into Convex by convex/seed.ts.
 // SERVER-ONLY: this file must never be imported from src/ (deck content
-// stays out of the client bundle — PRD §6.2). The tiny client-side demo
-// deck lives separately at src/game/demo-deck.ts, on purpose.
+// stays out of the client bundle — PRD §6.2). The small client-side Sample
+// Deck lives separately at src/game/sample-deck.ts, on purpose.
 //
 // Authoring bar (PRD §2.4): actionable in <2 min, no props unless tagged,
 // works for any pairing, comfortable to read aloud. Zones escalate WITHIN

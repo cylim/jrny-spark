@@ -1,5 +1,6 @@
 import { internalMutation } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+import { MAX_PROMPTS_PER_DECK } from "./decks";
 import { STARTER_DECKS, type StarterText } from "./starterDecks";
 
 /** Normalize authored text (plain English or localized map) to the DB shape. */
@@ -17,6 +18,13 @@ export const seedDecks = internalMutation({
   args: {},
   handler: async (ctx) => {
     for (const deck of STARTER_DECKS) {
+      // decks.getPrompts reads at most MAX_PROMPTS_PER_DECK; refusing to seed
+      // past it keeps that bound from ever silently truncating a pool.
+      if (deck.prompts.length > MAX_PROMPTS_PER_DECK) {
+        throw new Error(
+          `Deck "${deck.slug}" has ${deck.prompts.length} prompts — the serving cap is ${MAX_PROMPTS_PER_DECK}`
+        );
+      }
       const existing = await ctx.db
         .query("decks")
         .withIndex("by_slug", (q) => q.eq("slug", deck.slug))

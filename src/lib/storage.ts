@@ -21,6 +21,8 @@ export interface Prefs {
   playerNames?: [string, string];
   locale?: Locale;
   lastSkipBudget?: SkipBudget;
+  /** Settings → usage stats off. Read before any analytics capture (§6.9). */
+  analyticsOptOut?: boolean;
 }
 
 export interface HistoryEntry {

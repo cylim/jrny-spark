@@ -129,6 +129,12 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "settings.app.iosHint.add": "加入主畫面",
   "settings.app.iosHint.after": "。",
   "settings.app.eligible": "符合條件後,瀏覽器會主動提供安裝選項。",
+  "settings.usage": "使用統計",
+  "settings.usage.toggle": "分享匿名使用統計",
+  "settings.usage.body":
+    "只計次數——例如「開始了一場遊戲」「跳過了一張卡」。絕不包含卡片文字、玩家名字,或你抽到哪些卡。以無 cookie 方式傳送到 PostHog(美國),隨時可以關閉。",
+  "settings.usage.on": "開",
+  "settings.usage.off": "關",
   "settings.data": "你的資料",
   "settings.data.body":
     "進行中的遊戲、回顧、偏好設定與快取的牌組,都只存在這台裝置上。",
@@ -200,10 +206,31 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "privacy.never.2": "你抽了、回答了或跳過了哪些卡",
   "privacy.never.3": "玩家名字——它們從不離開裝置",
   "privacy.never.4": "任何回答、筆記或照片——我們根本沒有接收的管道",
+  "privacy.analytics.title": "匿名使用統計(PostHog,美國)",
+  "privacy.analytics.body":
+    "為了知道 Spark 是否好用——有多少場遊戲開始、多少場完成、卡片多常被跳過——我們會把一份固定的簡短事件清單傳送到位於美國的 PostHog。沒有 cookie、沒有錄影回放、沒有自動擷取:只有下面這些事件,也只有下面這些欄位。瀏覽器儲存空間裡會保留一個隨機的匿名 ID,用來把同一台裝置的事件連在一起;清除本機資料時會換成新的一個,關閉使用統計時則會刪除。",
+  "privacy.analytics.collected.title": "會傳送的",
+  "privacy.analytics.collected.1": "你目前在哪個畫面",
+  "privacy.analytics.collected.2":
+    "一場遊戲開始了(強度與遊戲類型)或結束了(概略時長與卡片數)",
+  "privacy.analytics.collected.3":
+    "一張卡被顯示(只有區段、類型,以及為什麼抽到它)、跳過或略過",
+  "privacy.analytics.collected.4":
+    "蛇(馴服或滑落)、留下/升級、安裝與設定的選擇;儲存了模板;發生了錯誤(只有錯誤類型,絕不含內容)",
+  "privacy.analytics.collected.5": "裝置類型(手機、平板或桌機)與應用程式語言",
+  "privacy.analytics.never.title": "絕不會傳送的",
+  "privacy.analytics.never.1": "卡片文字,或你抽到哪一張卡",
+  "privacy.analytics.never.2": "玩家名字、回答、模板名稱,或任何你輸入的內容",
+  "privacy.analytics.never.3":
+    "錄影回放、自動擷取的點按、cookie,或你的位置(已停用 IP 查詢)",
+  "privacy.analytics.optout.before": "隨時可以在",
+  "privacy.analytics.optout.link": "設定 → 使用統計",
+  "privacy.analytics.optout.after": "關閉。",
   "privacy.outro.before":
-    "進行中的遊戲、回顧與偏好設定,只存在這個瀏覽器的本機儲存空間。你可以在",
+    "進行中的遊戲、回顧與偏好設定,只存在這台裝置的這個瀏覽器裡。你可以在",
   "privacy.outro.link": "設定 → 清除所有本機資料",
-  "privacy.outro.after": "一次清空。遊玩不需要帳號,也沒有廣告和第三方追蹤器。",
+  "privacy.outro.after":
+    "一次清空。遊玩不需要帳號,也沒有廣告;除了上述匿名使用統計之外,不追蹤任何事。",
 
   "dice.roll": "擲骰子",
 };

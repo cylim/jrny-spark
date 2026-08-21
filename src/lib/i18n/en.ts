@@ -148,6 +148,12 @@ export const en = {
   "settings.app.iosHint.after": ".",
   "settings.app.eligible":
     "Your browser will offer installation once eligible.",
+  "settings.usage": "Usage stats",
+  "settings.usage.toggle": "Share anonymous usage stats",
+  "settings.usage.body":
+    "Counts only — that a session started, that a card was skipped. Never prompt text, player names, or which cards you drew. Sent cookieless to PostHog (US); switch it off any time.",
+  "settings.usage.on": "On",
+  "settings.usage.off": "Off",
   "settings.data": "Your data",
   "settings.data.body":
     "Sessions in progress, recaps, preferences and cached decks live only on this device.",
@@ -230,11 +236,33 @@ export const en = {
   "privacy.never.3": "Player names — they never leave the device",
   "privacy.never.4":
     "Any answer, note, or photo — we have no way to receive them",
+  "privacy.analytics.title": "Anonymous usage stats (PostHog, US)",
+  "privacy.analytics.body":
+    "To see whether Spark works — how many sessions start and finish, how often cards get skipped — we send a short, fixed list of events to PostHog, hosted in the US. No cookies, no session replay, no autocapture: only the events below, with only the fields below. A random anonymous ID in this browser's storage ties events from the same device together; it is reset when you clear local data and removed when you switch usage stats off.",
+  "privacy.analytics.collected.title": "What is sent",
+  "privacy.analytics.collected.1": "Which screen you're on",
+  "privacy.analytics.collected.2":
+    "That a session started (its tier and game type) or finished (rounded length and card count)",
+  "privacy.analytics.collected.3":
+    "That a card was shown (only its zone, kind, and why it was drawn), skipped, or passed",
+  "privacy.analytics.collected.4":
+    "Your snake (charm or slide), Stay / Advance, install, and settings choices; that a Template was saved; that something broke (the kind of error, never its contents)",
+  "privacy.analytics.collected.5":
+    "Device class (phone, tablet, or desktop) and app language",
+  "privacy.analytics.never.title": "What is never sent",
+  "privacy.analytics.never.1": "Prompt text, or which prompt was drawn",
+  "privacy.analytics.never.2":
+    "Player names, answers, Template names, or anything you type",
+  "privacy.analytics.never.3":
+    "Session replays, autocaptured taps, cookies, or your location (IP lookup is disabled)",
+  "privacy.analytics.optout.before": "Switch it off any time in ",
+  "privacy.analytics.optout.link": "Settings → Usage stats",
+  "privacy.analytics.optout.after": ".",
   "privacy.outro.before":
-    "Live sessions, recaps, and preferences are stored only in this browser's local storage. You can wipe everything in ",
+    "Live sessions, recaps, and preferences are stored only in this browser, on this device. You can wipe everything in ",
   "privacy.outro.link": "Settings → Clear local data",
   "privacy.outro.after":
-    ". No accounts are required to play, and there are no ads and no third-party trackers.",
+    ". No accounts are required to play, there are no ads, and nothing is tracked beyond the anonymous usage stats above.",
 
   // — misc —
   "dice.roll": "Roll the die",

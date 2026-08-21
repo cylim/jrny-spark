@@ -5,7 +5,9 @@ import { useI18n } from "~/lib/i18n";
  * The full-screen card. Three ways out (§4.6):
  * - Done — performed the card.
  * - Pass — put it away, nothing in its place. Always available, uncounted,
- *   and it dispatches the SAME event as Done: deliberately indistinguishable.
+ *   and it dispatches the SAME engine event as Done: deliberately
+ *   indistinguishable in play. `onPass` exists only so the allow-listed,
+ *   content-free `pass` analytics event can be recorded (Appendix A).
  * - Skip — budgeted redraw; hidden at zero budget and for pinned cards
  *   (their redraw would return the same pin).
  */
@@ -15,6 +17,7 @@ export function PromptCard({
   skipsRemaining,
   canSkip,
   onDone,
+  onPass,
   onSkip,
 }: {
   card: ActiveCard;
@@ -23,6 +26,7 @@ export function PromptCard({
   skipsRemaining: number | null;
   canSkip: boolean;
   onDone: () => void;
+  onPass: () => void;
   onSkip: () => void;
 }) {
   const { t } = useI18n();
@@ -59,7 +63,7 @@ export function PromptCard({
           )}
           <button
             type="button"
-            onClick={onDone}
+            onClick={onPass}
             className="rounded-full px-4 py-3 text-sm text-mist transition hover:text-blush"
           >
             {t("card.pass")}

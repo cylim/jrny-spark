@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { GameState, Tier } from "~/game/types";
-import { createSession, DEFAULT_SKIP_BUDGET } from "~/game/engine";
+import { DEFAULT_SKIP_BUDGET } from "~/game/engine";
 import { SAMPLE_DECK_SLUG } from "~/game/sample-deck";
 import { useDeckList } from "~/lib/use-decks";
 import {
@@ -9,8 +9,8 @@ import {
   loadSession,
   requestPersistence,
   savePrefs,
-  saveSession,
 } from "~/lib/storage";
+import { beginSession } from "~/lib/begin-session";
 import { useAgeGate } from "~/lib/use-age-gate";
 import { useI18n } from "~/lib/i18n";
 import { SkipBudgetPicker } from "~/components/SkipBudgetPicker";
@@ -72,9 +72,7 @@ function Setup() {
       boardPresetId: "classic",
       skipsPerPlayer: skips,
     };
-    // Await the write — /play reads the session on mount and would bounce
-    // back here if it raced an uncommitted IDB transaction.
-    await saveSession(createSession(config, Date.now()));
+    await beginSession(config);
     void savePrefs({ playerNames, lastTier: tier, lastSkipBudget: skips });
     requestPersistence();
     navigate({ to: "/play" });

@@ -10,6 +10,7 @@ import { Show, UserButton } from "@clerk/tanstack-react-start";
 import appCss from "../styles/app.css?url";
 import { Providers } from "~/components/Providers";
 import { RegisterSW } from "~/components/RegisterSW";
+import { Analytics } from "~/components/Analytics";
 import { SetupBanner } from "~/components/SetupBanner";
 import { useI18n } from "~/lib/i18n";
 import { hasClerk } from "~/env";
@@ -54,6 +55,9 @@ function RootComponent() {
     <RootDocument>
       <Providers>
         <Header />
+        {/* Before <Outlet /> so its effects (boot, page_view) run ahead of
+            the route tree's — effects fire in tree order. */}
+        <Analytics />
         <Outlet />
         <RegisterSW />
         <SetupBanner />

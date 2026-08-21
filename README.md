@@ -12,7 +12,7 @@ privacy line, and architecture decisions all live there. Vocabulary follows
 ## Stack
 
 TanStack Start (React 19, Vite) · Convex · Clerk · Tailwind CSS v4 ·
-IndexedDB (`idb`) · Workbox PWA · Bun.
+IndexedDB (`idb`) · Workbox PWA · PostHog (content-free analytics) · Bun.
 
 ## Quick start (zero config)
 
@@ -39,17 +39,20 @@ first-ever visit that happens offline.)
 4. **Connect Clerk → Convex** — in the Clerk dashboard create a JWT template
    named `convex`; in the Convex dashboard set `CLERK_JWT_ISSUER_DOMAIN` to
    your Clerk Frontend API URL (see `convex/auth.config.ts`).
+5. **PostHog (optional)** — create a project in the **US** region and put its
+   API key in `VITE_POSTHOG_KEY`. Without it no analytics code runs. In the
+   project settings turn on "Discard client IP data". See _Analytics_ below.
 
 ## Scripts
 
-| Script | What |
-|---|---|
-| `bun dev` | Vite dev server (port 3000) |
-| `bun run dev:convex` | Convex dev deployment + codegen watcher |
-| `bun run build` | Production build **+ service worker** (`scripts/build-pwa.ts`) |
-| `bun run typecheck` | `tsc --noEmit` |
-| `bun run seed` | Seed/refresh starter decks |
-| `bun run icons` | Regenerate placeholder PWA icons |
+| Script                    | What                                                                              |
+| ------------------------- | --------------------------------------------------------------------------------- |
+| `bun dev`                 | Vite dev server (port 3000)                                                       |
+| `bun run dev:convex`      | Convex dev deployment + codegen watcher                                           |
+| `bun run build`           | Production build **+ service worker** (`scripts/build-pwa.ts`)                    |
+| `bun run typecheck`       | `tsc --noEmit`                                                                    |
+| `bun run seed`            | Seed/refresh starter decks                                                        |
+| `bun run icons`           | Regenerate placeholder PWA icons                                                  |
 | `bun scripts/simulate.ts` | Simulate 2000 games through the engine — termination check + session-length stats |
 
 ## Architecture notes (scaffold decisions)
@@ -67,6 +70,16 @@ first-ever visit that happens offline.)
   appear (documented upgrade path, PRD §6.2).
 - `convex/_generated/` **is committed** — TypeScript fails without it. If
   it's stale, run `bunx convex codegen` (or let `dev:convex` regenerate).
+- **Analytics are content-free by construction** (PRD §6.9, ADR 0001).
+  `src/lib/analytics.ts` is the single reviewed allow-list: a typed
+  event union (closed values, bucketed numbers) plus a runtime property table
+  installed as PostHog's `before_send`, so anything not on the list — PostHog's
+  own internal events included — is dropped before it leaves the device.
+  PostHog runs cookieless (a resettable anonymous id in localStorage only),
+  with autocapture, session replay, surveys, feature flags and external
+  scripts off. The Settings opt-out is read from IndexedDB _before_ PostHog is
+  initialized. Adding an event = editing that one file and re-reviewing it
+  against the Privacy Line; `track()` accepts nothing else.
 
 ## Deploy (spark.jrny.app)
 

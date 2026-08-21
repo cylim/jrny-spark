@@ -26,16 +26,27 @@ export function onInstallAvailable(fn: () => void): () => void {
   return () => listeners.delete(fn);
 }
 
-export async function promptInstall(): Promise<boolean> {
-  if (!deferredPrompt) return false;
-  await deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-  if (choice.outcome === "accepted") deferredPrompt = null;
-  return choice.outcome === "accepted";
+export type InstallOutcome = "accepted" | "dismissed";
+
+/**
+ * Show the native install prompt; null when none is available. The event is
+ * single-use whichever way it goes — if still eligible, the browser fires a
+ * fresh `beforeinstallprompt` later (see onInstallAvailable).
+ */
+export async function promptInstall(): Promise<InstallOutcome | null> {
+  const event = deferredPrompt;
+  if (!event) return null;
+  deferredPrompt = null;
+  await event.prompt();
+  const { outcome } = await event.userChoice;
+  return outcome;
 }
 
 export function isIos(): boolean {
-  return typeof navigator !== "undefined" && /iphone|ipad|ipod/i.test(navigator.userAgent);
+  return (
+    typeof navigator !== "undefined" &&
+    /iphone|ipad|ipod/i.test(navigator.userAgent)
+  );
 }
 
 export function isStandalone(): boolean {

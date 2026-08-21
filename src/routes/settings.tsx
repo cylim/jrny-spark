@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Show, SignInButton, UserButton } from "@clerk/tanstack-react-start";
 import { hasClerk } from "~/env";
@@ -11,6 +11,7 @@ import {
   promptInstall,
 } from "~/lib/install";
 import { LOCALES, useI18n } from "~/lib/i18n";
+import { resetAnalytics, setAnalyticsEnabled, track } from "~/lib/analytics";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -21,16 +22,30 @@ function Settings() {
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [installable, setInstallable] = useState(false);
   const [cleared, setCleared] = useState(false);
+  // Usage stats default to on; the opt-out is a local pref (§6.9). Once the
+  // user has tapped the switch, a late prefs read must not overwrite it.
+  const [usageStats, setUsageStats] = useState(true);
+  const usageStatsTouched = useRef(false);
   // Platform detection only after mount — calling isStandalone()/isIos()
   // during render would make server HTML and client hydration disagree.
   const [platform, setPlatform] = useState({ standalone: false, ios: false });
 
   useEffect(() => {
-    loadPrefs().then((p) => setAgeConfirmed(Boolean(p.ageConfirmed)));
+    loadPrefs().then((p) => {
+      setAgeConfirmed(Boolean(p.ageConfirmed));
+      if (!usageStatsTouched.current) setUsageStats(!p.analyticsOptOut);
+    });
     setInstallable(canPromptInstall());
     setPlatform({ standalone: isStandalone(), ios: isIos() });
     return onInstallAvailable(() => setInstallable(true));
   }, []);
+
+  const toggleUsageStats = () => {
+    usageStatsTouched.current = true;
+    const next = !usageStats;
+    setUsageStats(next);
+    void setAnalyticsEnabled(next);
+  };
 
   return (
     <main className="mx-auto max-w-md px-6 pb-16">
@@ -44,7 +59,15 @@ function Settings() {
             <button
               key={option.id}
               type="button"
-              onClick={() => setLocale(option.id)}
+              onClick={() => {
+                if (option.id === locale) return;
+                setLocale(option.id);
+                track({
+                  name: "settings_toggle",
+                  toggle: "language",
+                  state: option.id,
+                });
+              }}
               className={`rounded-xl py-2 text-sm font-semibold transition ${
                 locale === option.id
                   ? "bg-ember text-midnight"
@@ -105,6 +128,11 @@ function Settings() {
               onClick={() => {
                 void savePrefs({ ageConfirmed: false });
                 setAgeConfirmed(false);
+                track({
+                  name: "settings_toggle",
+                  toggle: "age_gate",
+                  state: "reset",
+                });
               }}
               className="rounded-full bg-plum-light px-4 py-2 text-xs text-mist hover:text-blush"
             >
@@ -120,7 +148,14 @@ function Settings() {
         ) : installable ? (
           <button
             type="button"
-            onClick={() => void promptInstall()}
+            onClick={() =>
+              void promptInstall().then((outcome) => {
+                // The prompt event is spent either way; the browser will
+                // re-offer via beforeinstallprompt if still eligible.
+                setInstallable(false);
+                if (outcome) track({ name: "install_prompt", outcome });
+              })
+            }
             className="rounded-full bg-ember px-5 py-2 text-sm font-semibold text-midnight"
           >
             {t("settings.app.install")}
@@ -140,6 +175,26 @@ function Settings() {
         )}
       </Section>
 
+      <Section title={t("settings.usage")}>
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-sm text-blush">{t("settings.usage.toggle")}</p>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={usageStats}
+            onClick={toggleUsageStats}
+            className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
+              usageStats
+                ? "bg-ember text-midnight"
+                : "bg-plum-light text-mist hover:text-blush"
+            }`}
+          >
+            {usageStats ? t("settings.usage.on") : t("settings.usage.off")}
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-mist">{t("settings.usage.body")}</p>
+      </Section>
+
       <Section title={t("settings.data")}>
         <p className="text-sm text-mist">
           {t("settings.data.body")}{" "}
@@ -152,7 +207,13 @@ function Settings() {
           type="button"
           onClick={() => {
             if (confirm(t("settings.data.confirm"))) {
-              void clearAllLocalData().then(() => setCleared(true));
+              void clearAllLocalData().then(() => {
+                setCleared(true);
+                // Prefs are gone, so usage stats are back to the default —
+                // drop the anonymous id and re-read the (default) choice.
+                setUsageStats(true);
+                resetAnalytics();
+              });
             }
           }}
           className="mt-3 rounded-full bg-rose-950 px-5 py-2 text-sm text-rose-300 hover:bg-rose-900"

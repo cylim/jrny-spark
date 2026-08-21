@@ -5,13 +5,14 @@ import { useMutation } from "convex/react";
 import { ConvexError } from "convex/values";
 import { api } from "../../../convex/_generated/api";
 import { hasClerk, hasConvex } from "~/env";
-import { createSession, DEFAULT_SKIP_BUDGET, zoneOf } from "~/game/engine";
+import { DEFAULT_SKIP_BUDGET, zoneOf } from "~/game/engine";
 import { CLASSIC } from "~/game/board-presets";
 import { pinRejection, type PinRejection } from "~/game/pins";
 import { SAMPLE_DECK_SLUG } from "~/game/sample-deck";
 import type { Prompt, PromptKind, Tier } from "~/game/types";
 import { useDeckList } from "~/lib/use-decks";
-import { saveSession } from "~/lib/storage";
+import { beginSession } from "~/lib/begin-session";
+import { track } from "~/lib/analytics";
 import { useAgeGate } from "~/lib/use-age-gate";
 import { useI18n, type MessageKey } from "~/lib/i18n";
 import { SkipBudgetPicker } from "~/components/SkipBudgetPicker";
@@ -88,23 +89,17 @@ function NewTemplate() {
   };
 
   const beginDraft = async () => {
-    // Awaited — /play reads the session on mount (see setup.tsx).
-    await saveSession(
-      createSession(
-        {
-          tier,
-          deckSlug: chosenSlug,
-          playerNames: [
-            t("setup.players.placeholder", { n: 1 }),
-            t("setup.players.placeholder", { n: 2 }),
-          ],
-          boardPresetId: "classic",
-          tilePrompts: toTilePrompts(),
-          skipsPerPlayer: skips,
-        },
-        Date.now()
-      )
-    );
+    await beginSession({
+      tier,
+      deckSlug: chosenSlug,
+      playerNames: [
+        t("setup.players.placeholder", { n: 1 }),
+        t("setup.players.placeholder", { n: 2 }),
+      ],
+      boardPresetId: "classic",
+      tilePrompts: toTilePrompts(),
+      skipsPerPlayer: skips,
+    });
     navigate({ to: "/play" });
   };
 
@@ -130,8 +125,10 @@ function NewTemplate() {
           kind: r.kind,
         })),
       });
+      track({ name: "template_saved" });
       navigate({ to: "/templates" });
     } catch (err) {
+      track({ name: "error", kind: "template_save" });
       setSaveError(
         err instanceof ConvexError && typeof err.data === "string"
           ? err.data

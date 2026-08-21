@@ -13,6 +13,7 @@ import { useAdvanceOption } from "~/lib/use-advance-option";
 import { useAgeGate } from "~/lib/use-age-gate";
 import { useI18n } from "~/lib/i18n";
 import { appendHistory, clearSession, loadSession } from "~/lib/storage";
+import { cardsDrawnBucket, durationBucket, track } from "~/lib/analytics";
 
 export const Route = createFileRoute("/play/")({
   component: Play,
@@ -38,6 +39,27 @@ function Play() {
     if (state === null) navigate({ to: "/play/setup" });
   }, [state, navigate]);
 
+  // card_shown fires once per draw (a Skip's replacement included) and never
+  // for a card resumed from storage: count draws from the first state seen.
+  const countedDraws = useRef<number | null>(null);
+  useEffect(() => {
+    if (!state) return;
+    const drawn = state.stats.cardsDrawn;
+    if (countedDraws.current === null) {
+      countedDraws.current = drawn;
+      return;
+    }
+    if (state.activeCard && drawn > countedDraws.current) {
+      countedDraws.current = drawn;
+      track({
+        name: "card_shown",
+        zone: state.activeCard.prompt.zone,
+        kind: state.activeCard.prompt.kind,
+        reason: state.activeCard.reason,
+      });
+    }
+  }, [state]);
+
   // Finished → record a local-only recap, clear the session, then navigate.
   // Both writes are awaited BEFORE navigating: recap must read the fresh
   // entry, and browser-back must find no session (else it would re-append).
@@ -49,21 +71,37 @@ function Play() {
     ) {
       recorded.current = true;
       const finished = state;
+      const finishedAt = Date.now();
+      track({
+        name: "session_completed",
+        duration_bucket: durationBucket(finishedAt - finished.stats.startedAt),
+        cards_drawn_bucket: cardsDrawnBucket(finished.stats.cardsDrawn),
+      });
       void (async () => {
-        await appendHistory({
-          finishedAt: Date.now(),
-          winnerName: finished.players[finished.winner!].name,
-          tier: finished.config.tier,
-          stats: finished.stats,
-          // null (unlimited) must survive — `??` would rewrite it to the
-          // default and make the recap show a skips line it shouldn't.
-          skipsPerPlayer:
-            finished.config.skipsPerPlayer === undefined
-              ? DEFAULT_SKIP_BUDGET
-              : finished.config.skipsPerPlayer,
-        });
-        await clearSession();
-        navigate({ to: "/play/recap" });
+        try {
+          await appendHistory({
+            finishedAt,
+            winnerName: finished.players[finished.winner!].name,
+            tier: finished.config.tier,
+            stats: finished.stats,
+            // null (unlimited) must survive — `??` would rewrite it to the
+            // default and make the recap show a skips line it shouldn't.
+            skipsPerPlayer:
+              finished.config.skipsPerPlayer === undefined
+                ? DEFAULT_SKIP_BUDGET
+                : finished.config.skipsPerPlayer,
+          });
+        } finally {
+          // Always clear: a finished session left behind would re-run this
+          // effect on the next mount — re-appending the recap and counting
+          // session_completed twice. And always move on to the recap, even
+          // if the clear itself fails.
+          try {
+            await clearSession();
+          } finally {
+            navigate({ to: "/play/recap" });
+          }
+        }
       })();
     }
   }, [state, navigate]);
@@ -142,7 +180,14 @@ function Play() {
           skipsRemaining={current.skipsRemaining}
           canSkip={canSkip}
           onDone={() => dispatch({ type: "CARD_DONE" })}
-          onSkip={() => dispatch({ type: "CARD_SKIP" })}
+          onPass={() => {
+            track({ name: "pass" });
+            dispatch({ type: "CARD_DONE" });
+          }}
+          onSkip={() => {
+            track({ name: "skip" });
+            dispatch({ type: "CARD_SKIP" });
+          }}
         />
       )}
 
@@ -151,8 +196,14 @@ function Play() {
           playerName={current.name}
           from={state.pendingSnake.from}
           to={state.pendingSnake.to}
-          onAccept={() => dispatch({ type: "SNAKE_ACCEPT" })}
-          onCharm={() => dispatch({ type: "SNAKE_CHARM" })}
+          onAccept={() => {
+            track({ name: "charm_choice", choice: "slide" });
+            dispatch({ type: "SNAKE_ACCEPT" });
+          }}
+          onCharm={() => {
+            track({ name: "charm_choice", choice: "charm" });
+            dispatch({ type: "SNAKE_CHARM" });
+          }}
         />
       )}
 
@@ -161,13 +212,17 @@ function Play() {
           tier={state.config.tier}
           playerNames={[state.players[0].name, state.players[1].name]}
           advance={advance}
-          onStay={() => dispatch({ type: "EXHAUSTION_STAY" })}
+          onStay={() => {
+            track({ name: "exhaustion_choice", choice: "stay" });
+            dispatch({ type: "EXHAUSTION_STAY" });
+          }}
           onAdvance={(option) =>
             // Advancing into spicy hits the 18+ gate if this device hasn't
             // confirmed it; declining leaves the sheet up, nothing advances.
-            withAgeCheck(option.tier, () =>
-              dispatch({ type: "EXHAUSTION_ADVANCE", ...option })
-            )
+            withAgeCheck(option.tier, () => {
+              track({ name: "exhaustion_choice", choice: "advance" });
+              dispatch({ type: "EXHAUSTION_ADVANCE", ...option });
+            })
           }
         />
       )}
@@ -200,7 +255,10 @@ function DeckLoadingNote() {
   // stop pretending it's loading.
   const [slow, setSlow] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => setSlow(true), 5000);
+    const timer = setTimeout(() => {
+      setSlow(true);
+      track({ name: "error", kind: "deck_unavailable" });
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
   return (

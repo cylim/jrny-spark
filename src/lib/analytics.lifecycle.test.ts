@@ -12,21 +12,23 @@ const mocks = vi.hoisted(() => {
     set_config: vi.fn(),
     reset: vi.fn(),
   };
-  let pendingPrefs: ((p: { analyticsOptOut?: boolean }) => void) | null = null;
+  let pendingPrefs: (() => void) | null = null;
   const storage = {
     prefs: {} as { analyticsOptOut?: boolean },
-    loadPrefs: vi.fn(
-      () =>
-        new Promise<{ analyticsOptOut?: boolean }>((resolve) => {
-          pendingPrefs = resolve;
-        })
-    ),
+    // Like a real IndexedDB read: resolves with what was stored when the
+    // read STARTED, so a write that lands in between is a genuinely stale read.
+    loadPrefs: vi.fn(() => {
+      const snapshot = { ...storage.prefs };
+      return new Promise<{ analyticsOptOut?: boolean }>((resolve) => {
+        pendingPrefs = () => resolve(snapshot);
+      });
+    }),
     savePrefs: vi.fn(async (patch: { analyticsOptOut?: boolean }) => {
       storage.prefs = { ...storage.prefs, ...patch };
     }),
-    /** Let the pending loadPrefs() resolve with the current prefs. */
+    /** Let the pending loadPrefs() resolve (with its start-time snapshot). */
     resolvePrefs() {
-      pendingPrefs?.(storage.prefs);
+      pendingPrefs?.();
       pendingPrefs = null;
     },
   };
@@ -218,9 +220,9 @@ describe("consent lifecycle", () => {
   it("a toggle that lands before the preference is read wins over the stale read", async () => {
     storage.prefs = {}; // stored: on
     const { initAnalytics, setAnalyticsEnabled, track } = await fresh();
-    initAnalytics();
-    await setAnalyticsEnabled(false); // user opts out while loadPrefs is pending
-    storage.resolvePrefs(); // resolves with the OLD prefs object? no — savePrefs updated it
+    initAnalytics(); // the read starts now and will resolve with "on"
+    await setAnalyticsEnabled(false); // user opts out while it is pending
+    storage.resolvePrefs(); // the stale "on" arrives — must not re-enable
     await tick();
     track({ name: "skip" });
     await tick();

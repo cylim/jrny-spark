@@ -51,6 +51,11 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "setup.skips.unlimited": "무제한",
   "setup.start": "여정을 시작해요",
 
+  // — shared skip-budget picker (context-neutral; used in setup and builder) —
+  "skips.note":
+    "스킵은 카드를 새 카드로 바꿔요. 카드를 그냥 덮어두는 패스는 언제나 무제한이에요.",
+  "skips.unlimited": "무제한",
+
   "play.loading": "게임을 불러오는 중…",
   "play.turn": "{name}의 차례",
   "play.tile": "{tile}번 칸",
@@ -181,7 +186,7 @@ export const ko: Partial<Record<MessageKey, string>> = {
   "builder.pins.kind.action": "행동",
   "builder.pins.kind.together": "함께",
   "builder.pins.remove": "지우기",
-  "builder.pins.placeholder": "카드 내용을 적어 주세요…",
+  "builder.pins.placeholder": "프롬프트 내용을 적어 주세요…",
   "builder.pin.outOfRange": "1과 99 사이의 칸을 골라 주세요.",
   "builder.pin.snakeHead":
     "그 칸은 뱀의 머리예요 — 미끄러지느라 카드가 묻혀 버려요.",

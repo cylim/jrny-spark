@@ -56,6 +56,11 @@ export const en = {
   "setup.skips.unlimited": "Unlimited",
   "setup.start": "Start the journey",
 
+  // — shared skip-budget picker (context-neutral; used in setup and builder) —
+  "skips.note":
+    "A Skip trades a card for a fresh one. Putting a card away without drawing a replacement (Pass) is always free.",
+  "skips.unlimited": "Unlimited",
+
   // — play —
   "play.loading": "Loading your game…",
   "play.turn": "{name}'s turn",
@@ -188,13 +193,13 @@ export const en = {
   "builder.deck.sample": "Sample Deck",
   "builder.skips": "Skips per player",
   "builder.pins": "Pinned Prompts",
-  "builder.pins.add": "+ Add card",
+  "builder.pins.add": "+ Add Pinned Prompt",
   "builder.pins.tile": "Tile",
   "builder.pins.kind.question": "Question",
   "builder.pins.kind.action": "Action",
   "builder.pins.kind.together": "Together",
   "builder.pins.remove": "Remove",
-  "builder.pins.placeholder": "Your card text…",
+  "builder.pins.placeholder": "Your prompt text…",
   "builder.pin.outOfRange": "Pick a tile between 1 and 99.",
   "builder.pin.snakeHead":
     "That's a snake head — the slide would swallow this card.",
@@ -220,7 +225,7 @@ export const en = {
   "privacy.know.title": "Our servers know",
   "privacy.know.1": "Who you are — only if you create an account",
   "privacy.know.2":
-    "Game setups you chose to save (board, tier, your custom card text)",
+    "Game setups you chose to save (board, tier, your Pinned Prompt text)",
   "privacy.know.3": "What you bought, once premium decks exist",
   "privacy.never.title": "Our servers never know",
   "privacy.never.1": "Anything that happened during a game",

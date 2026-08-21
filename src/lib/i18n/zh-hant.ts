@@ -48,6 +48,10 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "setup.skips.unlimited": "無限",
   "setup.start": "啟程出發",
 
+  // — shared skip-budget picker (context-neutral; used in setup and builder) —
+  "skips.note": "「跳過」會換一張新卡。直接把卡收起來（略過）永遠不限次數。",
+  "skips.unlimited": "無限",
+
   "play.loading": "正在載入遊戲…",
   "play.turn": "輪到 {name}",
   "play.tile": "第 {tile} 格",
@@ -173,7 +177,7 @@ export const zhHant: Partial<Record<MessageKey, string>> = {
   "builder.pins.kind.action": "行動",
   "builder.pins.kind.together": "一起",
   "builder.pins.remove": "移除",
-  "builder.pins.placeholder": "寫下你的卡片內容…",
+  "builder.pins.placeholder": "寫下你的提示內容…",
   "builder.pin.outOfRange": "請選擇 1 到 99 之間的格子。",
   "builder.pin.snakeHead": "那是蛇頭——滑落會吞掉這張卡。",
   "builder.pin.ladderFoot": "那是梯子的底端——攀爬會跳過這張卡。",

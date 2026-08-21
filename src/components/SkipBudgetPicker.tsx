@@ -19,7 +19,7 @@ export function SkipBudgetPicker({
       <h2 className="text-sm font-semibold uppercase tracking-wider text-mist">
         {title}
       </h2>
-      <p className="mt-1 text-xs text-mist/60">{t("setup.skips.note")}</p>
+      <p className="mt-1 text-xs text-mist/60">{t("skips.note")}</p>
       <div className="mt-3 flex gap-2">
         {SKIP_CHOICES.map((choice) => (
           <button
@@ -32,7 +32,7 @@ export function SkipBudgetPicker({
                 : "bg-plum text-mist hover:bg-plum-light"
             }`}
           >
-            {choice ?? t("setup.skips.unlimited")}
+            {choice ?? t("skips.unlimited")}
           </button>
         ))}
       </div>

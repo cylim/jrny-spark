@@ -8,7 +8,7 @@ import { rollDie, seededRng } from "../src/game/rng";
 import { sampleDeckPrompts } from "../src/game/sample-deck";
 import type { GameState } from "../src/game/types";
 
-const DEMO_PROMPTS = sampleDeckPrompts("en");
+const SAMPLE_PROMPTS = sampleDeckPrompts("en");
 
 const GAMES = Number(process.argv[2] ?? 2000);
 const SECONDS_PER_CARD = 50; // rough authoring target: prompts resolvable in <2 min, most ~45-60s
@@ -41,7 +41,7 @@ for (let g = 0; g < GAMES; g++) {
       });
     } else if (state.phase === "prompt") {
       if (state.pendingDraw) {
-        const prompt = resolveDraw(state, DEMO_PROMPTS, rng);
+        const prompt = resolveDraw(state, SAMPLE_PROMPTS, rng);
         if (!prompt)
           throw new Error(`game ${g}: draw failed with pendingDraw set`);
         state = applyEvent(CLASSIC, state, {

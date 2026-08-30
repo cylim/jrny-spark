@@ -289,7 +289,17 @@ open_url "https://dash.cloudflare.com/profile/api-tokens"
 step "Create Token → find 'Edit Cloudflare Workers' → Use template."
 step "Account Resources: Include → your account. Zone Resources: leave as All zones (spark.jrny.app later)."
 step "Continue to summary → Create Token → copy it (shown only once)."
-ask_secret CLOUDFLARE_API_TOKEN "Paste the API token:"
+while :; do
+  ask_secret CLOUDFLARE_API_TOKEN "Paste the API token:"
+  say "Verifying the token with Cloudflare…"
+  WHOAMI=$(CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_TOKEN" bunx wrangler whoami 2>&1 || true)
+  if grep -q "Account ID" <<<"$WHOAMI"; then
+    say "${GREEN}✓${RESET} token accepted"
+    break
+  fi
+  warn "Cloudflare rejected that token (a real one is 40 characters of letters, digits, - and _). Copy the token value itself — not the token name, ID, or the Account ID — and try again."
+  [[ -f "$ENV_FILE" ]] && sed -i.bak -E "/^CLOUDFLARE_API_TOKEN=/d" "$ENV_FILE" && rm -f "$ENV_FILE.bak"
+done
 write_env CLOUDFLARE_API_TOKEN "$CLOUDFLARE_API_TOKEN"
 set_secret CLOUDFLARE_API_TOKEN "$CLOUDFLARE_API_TOKEN"
 
@@ -298,15 +308,20 @@ stage "Cloudflare — Account ID + workers.dev subdomain"
 open_url "https://dash.cloudflare.com/?to=/:account/workers-and-pages"
 step "Right sidebar → Account details → copy the Account ID (32 hex chars)."
 step "Same sidebar: if it offers to set up a workers.dev subdomain, do it — the first deploy needs one."
-ask CLOUDFLARE_ACCOUNT_ID "Paste the Account ID:"
+# The verified token's account list (from stage 2) is the source of truth —
+# the ID must be one of those accounts, or every deploy fails later.
+while :; do
+  ask CLOUDFLARE_ACCOUNT_ID "Paste the Account ID:"
+  if grep -qi "$CLOUDFLARE_ACCOUNT_ID" <<<"$WHOAMI"; then
+    say "${GREEN}✓${RESET} that account is one the token can access"
+    break
+  fi
+  warn "That ID isn't among the accounts this token can see. Accounts the token reaches:"
+  grep -E "│" <<<"$WHOAMI" | sed 's/^/    /' || true
+  [[ -f "$ENV_FILE" ]] && sed -i.bak -E "/^CLOUDFLARE_ACCOUNT_ID=/d" "$ENV_FILE" && rm -f "$ENV_FILE.bak"
+done
 write_env CLOUDFLARE_ACCOUNT_ID "$CLOUDFLARE_ACCOUNT_ID"
 set_secret CLOUDFLARE_ACCOUNT_ID "$CLOUDFLARE_ACCOUNT_ID"
-say "Checking the token against that account…"
-if cf_wrangler whoami >/dev/null 2>&1; then
-  say "${GREEN}✓${RESET} wrangler can reach Cloudflare with this token."
-else
-  warn "wrangler whoami failed — the token or Account ID looks wrong. Continue, but fix it before deploying."
-fi
 
 # ── 4 ──────────────────────────────────────────────────────────────────────
 stage "Convex — production deploy key"

@@ -1,6 +1,6 @@
 import { query } from "./_generated/server";
 import { v, type Infer } from "convex/values";
-import { displayTextValidator, localeValidator } from "./schema";
+import { displayTextValidator, localeField, localeValidator } from "./schema";
 
 export type Locale = Infer<typeof localeValidator>;
 type DisplayText = Infer<typeof displayTextValidator>;
@@ -12,7 +12,7 @@ type DisplayText = Infer<typeof displayTextValidator>;
  */
 export function localize(text: DisplayText, locale?: Locale): string {
   if (typeof text === "string") return text;
-  return (locale && text[locale]) || text.en;
+  return (locale && text[localeField[locale]]) || text.en;
 }
 
 // Read bounds. The catalog is curated (a handful of starter decks; PRD

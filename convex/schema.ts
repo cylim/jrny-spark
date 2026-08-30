@@ -1,5 +1,5 @@
 import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { v, type Infer } from "convex/values";
 
 export const tierValidator = v.union(
   v.literal("sweet"),
@@ -28,11 +28,25 @@ export const localeValidator = v.union(
 
 // Display text is a per-locale map — English required, others optional
 // (PRD §6.10). One canonical Card, per-language text.
+//
+// Convex field names must be identifiers (letters, digits, underscore), so
+// the BCP-47 locale id "zh-Hant" is stored under the key `zh_Hant`. The
+// locale id itself stays hyphenated everywhere else (it doubles as the HTML
+// `lang` attribute); `localeField` is the one place that mapping lives.
 export const localizedTextValidator = v.object({
   en: v.string(),
   ko: v.optional(v.string()),
-  "zh-Hant": v.optional(v.string()),
+  zh_Hant: v.optional(v.string()),
 });
+
+export const localeField = {
+  en: "en",
+  ko: "ko",
+  "zh-Hant": "zh_Hant",
+} as const satisfies Record<
+  Infer<typeof localeValidator>,
+  keyof Infer<typeof localizedTextValidator>
+>;
 
 // Rolling migration: rows written before i18n are plain strings (≙ English).
 // Reads normalize via decks.ts `localize()`; re-seeding rewrites starter

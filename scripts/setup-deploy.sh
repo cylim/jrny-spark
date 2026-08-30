@@ -208,6 +208,20 @@ mask() {
 expect_prefix() {
   [[ "$1" == "$2"* ]] || warn "$3 normally starts with '$2' — double-check you copied the right thing."
 }
+# ask_secret_prefixed KEY "Prompt" PREFIX "what" — like ask_secret, but keeps
+# asking until the value has the expected prefix: a wrong paste here (e.g. a
+# Cloudflare Account ID where a Convex key belongs) only surfaces as a failed
+# CI run, so it's worth blocking on.
+ask_secret_prefixed() {
+  local key="$1" prompt="$2" prefix="$3" what="$4"
+  while :; do
+    ask_secret "$key" "$prompt"
+    [[ "${!key}" == "$prefix"* ]] && return 0
+    warn "$what starts with '$prefix' — that paste didn't. Copy the key itself (not an ID or token from another tab) and try again."
+    # A wrong value already saved from an earlier run must not keep coming back as the default.
+    [[ -f "$ENV_FILE" ]] && sed -i.bak -E "/^${key}=/d" "$ENV_FILE" && rm -f "$ENV_FILE.bak"
+  done
+}
 # cf_wrangler ARGS… — wrangler authed with the captured token, pinned to the
 # root config (explicit -c skips the build-output redirect, so the target
 # Worker never depends on whichever env was built last).
@@ -302,8 +316,7 @@ step "Deployment switcher (top-left) → Production, in the jrny-spark project."
 step "Settings → Deploy keys → Generate a deploy key."
 step "Choose full CLI access, not the deploy-only scope — CI also runs 'convex run seed:seedDecks' and this wizard sets env vars."
 step "Copy the key (starts with prod:)."
-ask_secret CONVEX_DEPLOY_KEY "Paste the production deploy key:"
-expect_prefix "$CONVEX_DEPLOY_KEY" "prod:" "A production deploy key"
+ask_secret_prefixed CONVEX_DEPLOY_KEY "Paste the production deploy key:" "prod:" "A production deploy key"
 write_env CONVEX_DEPLOY_KEY "$CONVEX_DEPLOY_KEY"
 set_secret CONVEX_DEPLOY_KEY "$CONVEX_DEPLOY_KEY"
 
@@ -313,8 +326,7 @@ say "The dev Worker uses your existing dev deployment${DEV_DEPLOYMENT:+ ($DEV_DE
 open_url "https://dashboard.convex.dev/deployment/settings"
 step "Deployment switcher → your dev deployment${DEV_DEPLOYMENT:+ ($DEV_DEPLOYMENT)}."
 step "Settings → Deploy keys → Generate (full CLI access again) → copy (starts with dev:)."
-ask_secret CONVEX_DEPLOY_KEY_DEV "Paste the dev deploy key:"
-expect_prefix "$CONVEX_DEPLOY_KEY_DEV" "dev:" "A dev deploy key"
+ask_secret_prefixed CONVEX_DEPLOY_KEY_DEV "Paste the dev deploy key:" "dev:" "A dev deploy key"
 write_env CONVEX_DEPLOY_KEY_DEV "$CONVEX_DEPLOY_KEY_DEV"
 set_secret CONVEX_DEPLOY_KEY_DEV "$CONVEX_DEPLOY_KEY_DEV"
 

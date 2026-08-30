@@ -111,13 +111,17 @@ test("legacy plain-string prompts and deck text still serve under any locale", a
 test("deck listings project localized titles and descriptions", async () => {
   const t = convexTest(schema, modules);
   await seedDeck(t, {
-    title: { en: "First Steps", ko: "첫걸음", "zh-Hant": "第一步" },
+    title: { en: "First Steps", ko: "첫걸음", zh_Hant: "第一步" },
     description: { en: "Warm and curious." },
   });
 
   const korean = await t.query(api.decks.list, { locale: "ko" });
   expect(korean[0]?.title).toBe("첫걸음");
   expect(korean[0]?.description).toBe("Warm and curious."); // fallback
+
+  // The hyphenated locale id maps onto the identifier-safe stored key.
+  const chinese = await t.query(api.decks.list, { locale: "zh-Hant" });
+  expect(chinese[0]?.title).toBe("第一步");
 
   const english = await t.query(api.decks.list, {});
   expect(english[0]?.title).toBe("First Steps");

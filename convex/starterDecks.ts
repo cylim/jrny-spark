@@ -15,7 +15,7 @@ type Kind = "question" | "action" | "together";
 
 // Authoring stays plain English strings; add translations per card as the
 // per-language passes land (separate authoring work — PRD §6.10). The seed
-// normalizes both forms into the localized DB shape ({ en, ko?, "zh-Hant"? }).
+// normalizes both forms into the localized DB shape ({ en, ko?, zh_Hant? }).
 // Derived from displayTextValidator in schema.ts — adding a locale there
 // automatically widens this type without a second edit.
 export type StarterText = Infer<typeof displayTextValidator>;

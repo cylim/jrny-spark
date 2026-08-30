@@ -1,0 +1,38 @@
+// Cloudflare Workers config — Spark deploys as a single Worker: the
+// TanStack Start SSR handler plus dist/client static assets (incl. sw.js).
+// `main` is a package specifier, not a file path — @cloudflare/vite-plugin
+// resolves it through Vite during `vite build` (see vite.config.ts).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "jrny-spark",
+  "main": "@tanstack/react-start/server-entry",
+  "compatibility_date": "2025-09-24",
+  // Required: the SSR bundle uses node:async_hooks (AsyncLocalStorage).
+  // With a compatibility_date ≥ 2025-04-01 this also mirrors Worker secrets
+  // into process.env (src/start.ts reads process.env.CLERK_SECRET_KEY).
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "observability": { "enabled": true },
+
+  // spark.jrny.app — uncomment once the jrny.app zone is active on this
+  // Cloudflare account (deploys FAIL if the zone isn't there yet; until
+  // then the app lives at jrny-spark.<account>.workers.dev).
+  // "routes": [{ "pattern": "spark.jrny.app", "custom_domain": true }],
+
+  // Runtime secrets are NOT set here: `wrangler secret put CLERK_SECRET_KEY`.
+  // Build-time VITE_* vars are baked in by Vite and don't belong here either.
+
+  // Dev/staging Worker — a SEPARATE Worker named "jrny-spark-dev" (wrangler
+  // auto-suffixes the env name) at jrny-spark-dev.<account>.workers.dev.
+  // Selected at BUILD time: `CLOUDFLARE_ENV=dev bun run build`, then a plain
+  // `wrangler deploy` ships whichever env the build baked in. Its secrets are
+  // separate too: `wrangler secret put CLERK_SECRET_KEY --env dev` (sk_test).
+  "env": {
+    "dev": {
+      // name/main/compatibility/workers_dev/observability all inherit.
+      // Empty routes = never inherit the spark.jrny.app custom domain
+      // above once it's uncommented for prod.
+      "routes": [],
+    },
+  },
+}

@@ -16,10 +16,14 @@ const root = join(import.meta.dirname, "..");
 // TanStack Start (Nitro) writes client assets to .output/public by default;
 // older/other presets use dist/client.
 const candidates = [".output/public", "dist/client", "dist"];
-const publicDir = candidates.map((c) => join(root, c)).find((d) => existsSync(d));
+const publicDir = candidates
+  .map((c) => join(root, c))
+  .find((d) => existsSync(d));
 
 if (!publicDir) {
-  console.error(`build-pwa: no build output found (looked in ${candidates.join(", ")}). Run vite build first.`);
+  console.error(
+    `build-pwa: no build output found (looked in ${candidates.join(", ")}). Run vite build first.`
+  );
   process.exit(1);
 }
 
@@ -27,12 +31,18 @@ const result = await generateSW({
   swDest: join(publicDir, "sw.js"),
   globDirectory: publicDir,
   // Static assets only — SSR HTML must never be precached (stale shell).
-  globPatterns: ["**/*.{js,css,png,svg,ico,woff,woff2,webp,avif,webmanifest}", "offline.html"],
+  globPatterns: [
+    "**/*.{js,css,png,svg,ico,woff,woff2,webp,avif,webmanifest}",
+    "offline.html",
+  ],
   globIgnores: ["sw.js", "workbox-*.js", "**/*.map"],
   navigateFallback: "/offline.html",
   navigateFallbackDenylist: [/^\/api\//],
   clientsClaim: true,
-  skipWaiting: true,
+  // false → the updated worker WAITS until the page posts {type:'SKIP_WAITING'}
+  // (workbox emits that message handler), which is what lets RegisterSW.tsx
+  // show an "update ready" toast instead of silently swapping versions.
+  skipWaiting: false,
   cleanupOutdatedCaches: true,
   runtimeCaching: [
     {
@@ -49,6 +59,6 @@ const result = await generateSW({
 });
 
 console.log(
-  `✓ sw.js generated in ${publicDir} — precached ${result.count} files (${Math.round(result.size / 1024)} KB)`,
+  `✓ sw.js generated in ${publicDir} — precached ${result.count} files (${Math.round(result.size / 1024)} KB)`
 );
 for (const warning of result.warnings) console.warn("  warning:", warning);

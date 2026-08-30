@@ -4,11 +4,14 @@ node_modules/
 .nitro/
 .tanstack/
 dist/
+.wrangler/
 
-# env — never commit keys
+# env — never commit keys (.dev.vars is wrangler's local-dev secrets file)
 .env
 .env.local
 .env.*.local
+.dev.vars
+.dev.vars.*
 
 # convex local state (deployment config); _generated IS committed
 .convex/

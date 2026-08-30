@@ -7,6 +7,8 @@
     "dev:convex": "convex dev",
     "build": "vite build && bun scripts/build-pwa.ts",
     "preview": "vite preview",
+    "deploy": "convex deploy --cmd 'bun run build' && wrangler deploy",
+    "deploy:dev": "CLOUDFLARE_ENV=dev bun run build && wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -25,6 +27,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.53.0",
     "@edge-runtime/vm": "^5.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22.0.0",
@@ -38,8 +41,8 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.11",
-    "workbox-build": "^7.4.1"
+    "workbox-build": "^7.4.1",
+    "wrangler": "^4.124.0"
   }
 }

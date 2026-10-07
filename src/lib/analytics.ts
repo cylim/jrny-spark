@@ -27,7 +27,7 @@ import { loadPrefs, savePrefs } from "~/lib/storage";
 
 /** A TanStack route id — a closed set, never the raw URL a user typed. */
 export type Route = FileRouteTypes["id"];
-/** The only Game Type in the MVP (CONTEXT.md); Phase 2 adds more. */
+/** The only Game Type in the MVP (GLOSSARY.md); Phase 2 adds more. */
 export type GameType = "journey_board";
 export type ErrorKind =
   "template_save" | "deck_unavailable" | "sw_register" | "unhandled";

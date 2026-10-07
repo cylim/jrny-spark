@@ -6,7 +6,7 @@ Live target: **spark.jrny.app**.
 
 📄 **Read [PRD.md](./PRD.md) first** — product scope, game design, the
 privacy line, and architecture decisions all live there. Vocabulary follows
-[CONTEXT.md](./CONTEXT.md); the privacy boundary is
+[GLOSSARY.md](./GLOSSARY.md); the privacy boundary is
 [ADR 0001](./docs/adr/0001-play-data-never-leaves-the-device.md).
 
 ## Stack

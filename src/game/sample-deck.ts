@@ -2,7 +2,7 @@ import type { Prompt } from "./types";
 import type { Locale } from "~/lib/i18n/messages";
 
 /**
- * The bundled Sample Deck (sweet tier, CONTEXT.md: a fallback, not a mode):
+ * The bundled Sample Deck (sweet tier, GLOSSARY.md: a fallback, not a mode):
  * keeps the game playable with no Convex deployment (fresh clone,
  * unconfigured backend) and on a first-ever visit that happens offline.
  * Real decks live server-side (PRD §6.2) — this is a deliberate, small

@@ -2,7 +2,7 @@
 
 > Codename: `jrny-spark` · Live at `spark.jrny.app` · Part of the JRNY family (`jrny.app`)
 >
-> Vocabulary follows the glossary in [`CONTEXT.md`](./CONTEXT.md); the privacy boundary is [ADR 0001](./docs/adr/0001-play-data-never-leaves-the-device.md). Both are authoritative — where this document and they disagree, they win.
+> Vocabulary follows the glossary in [`GLOSSARY.md`](./GLOSSARY.md); the privacy boundary is [ADR 0001](./docs/adr/0001-play-data-never-leaves-the-device.md). Both are authoritative — where this document and they disagree, they win.
 
 ## 1. Product Overview
 
@@ -457,7 +457,7 @@ Env vars (see `.env.example`): `VITE_CONVEX_URL`, `VITE_CLERK_PUBLISHABLE_KEY`, 
 ```
 jrny-spark/
 ├── PRD.md
-├── CONTEXT.md                    # glossary — vocabulary source of truth
+├── GLOSSARY.md                   # glossary — vocabulary source of truth
 ├── docs/
 │   └── adr/
 │       └── 0001-play-data-never-leaves-the-device.md
